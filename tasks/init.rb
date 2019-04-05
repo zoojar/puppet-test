@@ -1,8 +1,8 @@
 #!/opt/puppetlabs/puppet/bin/ruby
-# This task picks up a test for a given role.
-# Store your tests at: <control-repo>/site/roles/files/tests/<test_tool>/<role>.rb.
-# Roles & Profiles: some use "role", others use "roles". 
-# Task metadata allows for both naming conventions; "role" and "roles". 
+# This task picks up a test for a given role
+# Store your tests at: <control-repo>/site/roles/files/tests/<test_tool>/<role>.rb
+# Roles & Profiles: some use "role", others use "roles"
+# Task metadata allows for both naming conventions; "role" and "roles"
 # Example usage with bolt (running from the control-repo dir):
 #   bolt task run test::roles -n webserver-01.local --modulepath . --run-as root --params '{ "test_tool": "inspec" , "test_file": "web_server.rb" }'
 #   It does the following things:
@@ -30,19 +30,19 @@ test_tool_version = params['test_tool_version'] ||= '> 0'
 test_tool_dir     = params['test_tool_dir']     ||= File.join(os_tmp, 'puppet_test', test_tool)
 test_file         = params['test_file']
 role              = params['role']
-test_files_dir    = params['test_files_dir']    ||= File.join(task_name,'files', 'tests')
+test_files_dir    = params['test_files_dir']    ||= File.join(task_name, 'files', 'tests')
 gem_bin           = params['gem_bin']           ||= File.join('/opt', 'puppetlabs', 'puppet', 'bin', 'gem')
 report_format     = params['report_format']     ||= 'documentation'
 
 def build_test_file_path(test_files_dir, test_tool, test_file, role)
-  # returns a file path based on the test_tool used and role or test_file specified
-  # if no role or test_file is specifed then we try to determine the target node's role 
+  # Returns a file path based on the test_tool used and role or test_file specified,
+  # if no role or test_file is specifed then we try to determine the target node's role.
   test_file = "#{role}.rb" unless role.nil?
-  if test_file.empty? then
+  if test_file.empty?
     facter_role = Facter.value(':role')
     unless (facter_role.strip).empty? then
       test_file = "#{facter_role}.rb"
-    else 
+    else
       raise [
         "\n# Unable to detect this node's role using facter.",
         "# You could try speficying a test_file as a parameter to this task.",
