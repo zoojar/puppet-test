@@ -44,9 +44,9 @@ def build_test_file_path(test_files_dir, test_tool, test_file, role)
       test_file = "#{facter_role}.rb"
     else
       raise [
-        "\n# Unable to detect this node's role using facter.",
-        "# You could try speficying a test_file as a parameter to this task.",
-        "# eg. test_file=web_server.rb" 
+        '# Unable to detect this node\'s role using facter.',
+        '# You could try speficying a test_file as a parameter to this task.',
+        '# eg. test_file=web_server.rb'
       ].join("\n")
     end
   end
@@ -68,7 +68,7 @@ def run(test_tool, test_file, report_format)
 end
 
 begin
-  unless tool_installed then
+  unless tool_installed
     # install gems for test tooling
     require_relative File.join(workspace, 'test', 'tasks', 'install_gem.rb')
     install_gem(gem_bin, test_tool, test_tool_version, test_tool_dir)
@@ -78,7 +78,7 @@ begin
   test_file = build_test_file_path(File.join(workspace, test_files_dir), test_tool, test_file, role)
 
   # load gems
-  $LOAD_PATH.unshift *Dir.glob(File.expand_path("#{test_tool_dir}/**/lib", __FILE__))
+  $LOAD_PATH.unshift(*Dir.glob(File.expand_path("#{test_tool_dir}/**/lib", __FILE__)))
 
   # execute testing
   run(test_tool, test_file, report_format)

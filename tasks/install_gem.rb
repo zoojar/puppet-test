@@ -11,7 +11,7 @@ def install_gem(gem_bin, gem, version, install_dir)
     require 'etc'
     ENV['HOME'] = Etc.getpwuid.dir
   end
-  cmd=[ 
+  cmd = [
     gem_bin, 'install', gem,
     '-i', install_dir,
     '--no-ri', '--no-rdoc',
@@ -24,12 +24,12 @@ def install_gem(gem_bin, gem, version, install_dir)
 end
 
 begin
-  params      = JSON.parse(STDIN.read) 
-  os_tmp      = case Facter.value(:kernel)
-    when 'Darwin'  ; '/Users/Shared/tmp' 
-    when 'Linux'   ; '/tmp' 
-    when 'Windows' ; 'c:/tmp'
-  end
+  params = JSON.parse(STDIN.read) 
+  os_tmp = case Facter.value(:kernel)
+           when 'Darwin'  ; '/Users/Shared/tmp' 
+           when 'Linux'   ; '/tmp' 
+           when 'Windows' ; 'c:/tmp'
+           end
   install_dir = params['install_dir'] || File.join(os_tmp, 'puppet_test')
   gem_bin     = params['gem_bin']     || File.join('/opt','puppetlabs','puppet','bin','gem')
   gem         = params['gem']
