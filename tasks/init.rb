@@ -30,34 +30,9 @@ test_tool_version = params['test_tool_version'] ||= '> 0'
 test_tool_dir     = params['test_tool_dir']     ||= File.join(os_tmp, 'puppet_test', test_tool)
 test_file         = params['test_file']
 role              = params['role']
-test_files_dir    = params['test_files_dir']    ||= File.join(task_name,'files','tests')
-gem_bin           = params['gem_bin']           ||= File.join('/opt','puppetlabs','puppet','bin','gem')
+test_files_dir    = params['test_files_dir']    ||= File.join(task_name,'files', 'tests')
+gem_bin           = params['gem_bin']           ||= File.join('/opt', 'puppetlabs', 'puppet', 'bin', 'gem')
 report_format     = params['report_format']     ||= 'documentation'
-
-class TestHarness
-  # Inspec
-  def inspec(workspace, test_file, report_format)
-    require 'inspec'
-    runner = Inspec::Runner.new({'reporter' => [report_format] })
-    runner.add_target(test_file)
-    exit_code = runner.run
-    return exit_code
-  end
-
-  # Serverspec
-  def serverspec(workspace, test_file, report_format)
-    require 'serverspec'
-    exit_code = RSpec::Core::Runner.run([test_file, '-c', '-f', report_format])
-    return exit_code
-  end
-
-  # Minitest
-  def minitest(workspace, test_file, report_format)
-    require 'minitest'
-    exit_code = load test_file
-    return exit_code
-  end
-end
 
 def build_test_file_path(test_files_dir, test_tool, test_file, role)
   # returns a file path based on the test_tool used and role or test_file specified
@@ -75,33 +50,37 @@ def build_test_file_path(test_files_dir, test_tool, test_file, role)
       ].join("\n")
     end
   end
-  return File.join(test_files_dir, test_tool, test_file)
+  File.join(test_files_dir, test_tool, test_file)
+end
+
+def run(test_tool, test_file, report_format)
+  require test_tool
+  case test_tool
+  when 'inspec'
+    runner = Inspec::Runner.new('reporter' => [report_format])
+    runner.add_target(test_file)
+    runner.run
+  when 'serverspec'
+    RSpec::Core::Runner.run([test_file, '-c', '-f', report_format])
+  when 'minitest'
+    load test_file
+  end
 end
 
 begin
-
   unless tool_installed then
     # install gems for test tooling
     require_relative File.join(workspace, 'test', 'tasks', 'install_gem.rb')
     install_gem(gem_bin, test_tool, test_tool_version, test_tool_dir)
   end
-
   # determine absolute path of test file to be executed
   test_file = build_test_file_path(File.join(workspace, test_files_dir), test_tool, test_file, role)
-
   # load gems
   $LOAD_PATH.unshift *Dir.glob(File.expand_path("#{test_tool_dir}/**/lib", __FILE__))
-
   # execute testing
-  exit_code = TestHarness.new.send(test_tool, workspace, test_file, report_format)
-  
-  # return with exit code
-  exit exit_code
-
+  run(test_tool, test_file, report_format)
 rescue Puppet::Error => e
-
   # handle failure and exit
   puts({ status: 'failure', error: e.message }.to_json)
   exit 1
-
 end
