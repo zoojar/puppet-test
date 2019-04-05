@@ -1,9 +1,7 @@
 
-# test
+# Test
 
-Welcome to your new module. A short overview of the generated parts can be found in the PDK documentation at https://puppet.com/pdk/latest/pdk_generating_modules.html .
-
-The README template below provides a starting point with details about what information to include in your README.
+Task for acceptance integration testing servers (roles)
 
 #### Table of Contents
 
@@ -18,66 +16,109 @@ The README template below provides a starting point with details about what info
 
 ## Description
 
-Briefly tell users why they might want to use your module. Explain what your module does and what kind of problems users can solve with it.
-
-This should be a fairly short description helps the user decide if your module is what they want.
+Puppet module including a task for acceptance & integration testing servers
+using various optional test tools such as inspec, serverspec and more.
 
 ## Setup
 
-### What test affects **OPTIONAL**
+### What test affects
 
-If it's obvious what your module touches, you can skip this section. For example, folks can probably figure out that your mysql_instance module affects their MySQL instances.
+When run against targeted nodes:
+1. Installs the specified test tooling (gems) in *gem_dir* (default: /tmp/puppet_test/gems) on the target node.
+2. Executes a specified test with the specified test tooling (eg. inspec) on the target node.
 
-If there's more that they should know about, though, this is the place to mention:
 
-* Files, packages, services, or operations that the module will alter, impact, or execute.
-* Dependencies that your module automatically installs.
-* Warnings or other important notices.
+### Setup Requirements
 
-### Setup Requirements **OPTIONAL**
+Your tests should live with your code...
 
-If your module requires anything extra before setting up (pluginsync enabled, another module, etc.), mention it here.
+This task assumes that you are using [Roles & Profiles](https://puppet.com/docs/pe/2019.0/the_roles_and_profiles_method.html) in your control-repo.
+The task instructs the test tool to pick up a test file for a given role from files in your role(s) module.
 
-If your most recent release breaks compatibility or requires particular steps for upgrading, you might want to include an additional "Upgrading" section here.
+For example: `<control-repo>/site/roles/files/tests/<test_tool>/<role>.rb`
 
-### Beginning with test
+To add an inspec test for your "web_server" role, add a test file:
+>`<control-repo>/site/roles/files/tests/inspec/web_server.rb`
+```ruby
+describe port(80) do
+  it { should be_listening }
+end
+```
 
-The very basic steps needed for a user to get the module up and running. This can include setup steps, if necessary, or it can be an example of the most basic use of the module.
+
+
+
+
+### Beginning with Test
+
+#### Role or Roles ?
+
+Some use "role", and others use "roles" when using the Roles & Profiles pattern.
+Task metadata (role.json & roles.json) allows for both naming conventions; "role" and "roles". When executing this task, for the task name use either `test::role` or `test::roles` depending on your role module location.
+
 
 ## Usage
 
-Include usage examples for common use cases in the **Usage** section. Show your users how to use your module to solve problems, and be sure to include code examples. Include three to five examples of the most important or common tasks a user can accomplish with your module. Show users how to accomplish more complex tasks that involve different types, classes, and functions working in tandem.
+### Example: Execute Inspec, against a web_server role
 
-## Reference
+[InSpec](https://www.inspec.io) is a free and open-source framework for testing and auditing your applications and infrastructure.
 
-This section is deprecated. Instead, add reference information to your code as Puppet Strings comments, and then use Strings to generate a REFERENCE.md in your module. For details on how to add code comments and generate documentation with Strings, see the Puppet Strings [documentation](https://puppet.com/docs/puppet/latest/puppet_strings.html) and [style guide](https://puppet.com/docs/puppet/latest/puppet_strings_style.html)
-
-If you aren't ready to use Strings yet, manually create a REFERENCE.md in the root of your module directory and list out each of your module's classes, defined types, facts, functions, Puppet tasks, task plans, and resource types and providers, along with the parameters for each.
-
-For each element (class, defined type, function, and so on), list:
-
-  * The data type, if applicable.
-  * A description of what the element does.
-  * Valid values, if the data type doesn't make it obvious.
-  * Default value, if any.
-
-For example:
-
+```bash
+bolt task run test::roles -n webserver-01.local --modulepath . --run-as root test_tool=inspec
 ```
-### `pet::cat`
 
-#### Parameters
+This does the following things:
+1. Installs the InSpec gems on webserver-01.local in gem_dir (/tmp/puppet_test/gems)
+2. Auto-detects the node's role ("web_server") using Facter.
+3. Executes InSpec runner with the "web_server.rb" test file:
+> *control-repo*/site/**roles**/files/tests/***inspec***/web_server.rb
+4. Returns the test report from InSpec 
 
-##### `meow`
 
-Enables vocalization in your cat. Valid options: 'string'.
+### Example: InSpec, specifying a test_file & reporter
 
-Default: 'medium-loud'.
+The test_file parameter can be used to execute a specific test file...
+
+```bash
+bolt task run test::roles -n webserver-01.local --modulepath . --run-as root \
+--params '{ "test_tool":"inspec", "test_file":"another_test.rb", "reporter":"json" }'
 ```
+
+This does the following things:
+1. Installs the InSpec gems on webserver-01.local in gem_dir (/tmp/puppet_test/gems)
+2. Copies the files from 
+3. Executes InSpec runner with the test file: 
+> *control-repo*/site/**roles**/files/tests/***inspec***/***another_test.rb*** 
+4. Returns the test report from InSpec in json format; [InSpec Reporters](https://www.inspec.io/docs/reference/reporters/)
+
+
+
+### Example: InSpec, specifying a test_file from this module
+
+This example uses an example test file within this module.
+
+```bash
+bolt task run test::test -n webserver-01.local --modulepath . --run-as root \ test_tool=inspec test_file=example.rb
+```
+
+This does the following things:
+1. Installs the InSpec gems on webserver-01.local in gem_dir (/tmp/puppet_test/gems)
+2. Copies the files from 
+3. Executes InSpec runner with the test file: 
+> *control-repo*/site/**roles**/files/tests/***inspec***/***another_test.rb*** 
+4. Returns the test report from InSpec in json format.
+
+
+
+
 
 ## Limitations
 
-In the Limitations section, list any incompatibilities, known issues, or other warnings.
+### InSpec: gcc gcc-c++
+
+Running InSpec on target nodes requires the following packages ot also be installed on the target node: install: gcc gcc-c++. InSpec gem installation will fail without these present. For a workaround, use serverspec.
+
+
 
 ## Development
 

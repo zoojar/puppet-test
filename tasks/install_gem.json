@@ -1,0 +1,25 @@
+{
+  "puppet_task_version": 1,
+  "supports_noop": false,
+  "description": "Installs gems in install_dir, returns path install_dir as stdout",
+  "private": true,
+  "parameters": {
+    "gem_bin": {
+      "type": "Optional[String]",
+      "description": "gem bin"
+    },
+    "gem": {
+      "type": "String",
+      "description": "gem name"
+    },
+    "version": {
+      "type": "Optional[String]",
+      "description": "gem version"
+    },
+    "install_dir": {
+      "type": "Optional[String]",
+      "description": "gem install dir"
+    }
+  },
+  "input_method": "stdin"
+}
