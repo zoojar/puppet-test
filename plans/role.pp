@@ -32,8 +32,8 @@ plan test::role(
   }
 
   # verify that a test tool is specified (serverspec/inspec/minitest)
-  unless $test_params[test_tool] { 
-    fail_plan([ 
+  unless $test_params[test_tool] {
+    fail_plan([
       'Aborting Plan: No test_tool specified in options hash.',
       'Please specify one, Bolt example:',
       '--params \'{\"test_params\":{\"test_tool\":\"serverspec\"}\'',
