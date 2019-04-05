@@ -5,12 +5,12 @@
 #    `<control-repo>/site/roles/files/tests/<test_tool>/<role>.rb`
 #  This plan will fail if this path is not accessible!
 #  If running via Bolt; roles must be on bolt's configured modulepath - run this from your control-repo:
-/*
-```
-    bolt plan run test::role --modulepath . --run-as root --params \
-    '{"target":"webserver.local","test_params":{"test_tool":"serverspec","test_file":"webserver.rb"},"ctrl_params":{"tmp_dir":"/Users/Shared/tmp"}}'
-```
-*/
+#
+#
+#    bolt plan run test::role --modulepath . --run-as root --params \
+#    '{"target":"webserver.local","test_params":{"test_tool":"serverspec","test_file":"webserver.rb"},"ctrl_params":{"tmp_dir":"/Users/Shared/tmp"}}'
+#
+#
 # NB. If the 'test_file' param is omitted then roles will be auto-detected using the target's 'role' fact
 
 plan test::role(
@@ -19,24 +19,24 @@ plan test::role(
   Optional[Hash]       $ctrl_params   = {},
   Optional[Hash]       $test_params   = {},
 ) {
-  
+
   # find the tests, where are the tests? role or roles?
   if    module_directory('role' ) { $_role_dir = 'role'  }
   elsif module_directory('roles') { $_role_dir = 'roles' }
-  else  { fail_plan([ 
-      "Aborting Plan: No role or roles module found on the module path.",
-      "This task picks up a test for a given role.",
-      "Store your tests at: ",
-      "<control-repo>/site/roles/files/tests/<test_tool>/<role>.rb",
+  else  { fail_plan([
+      'Aborting Plan: No role or roles module found on the module path.',
+      'This task picks up a test for a given role.',
+      'Store your tests at: ',
+      '<control-repo>/site/roles/files/tests/<test_tool>/<role>.rb',
     ].join(' '))
   }
-  
+
   # verify that a test tool is specified (serverspec/inspec/minitest)
   unless $test_params[test_tool] { 
     fail_plan([ 
-      "Aborting Plan: No test_tool specified in options hash.",
-      "Please specify one, Bolt example:",
-      "--params \'{\"test_params\":{\"test_tool\":\"serverspec\"}\'",
+      'Aborting Plan: No test_tool specified in options hash.',
+      'Please specify one, Bolt example:',
+      '--params \'{\"test_params\":{\"test_tool\":\"serverspec\"}\'',
     ].join(' '))
   }
 
