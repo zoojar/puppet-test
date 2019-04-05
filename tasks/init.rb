@@ -1,7 +1,7 @@
 #!/opt/puppetlabs/puppet/bin/ruby
 # This task picks up a test for a given role.
 # Store your tests at: <control-repo>/site/roles/files/tests/<test_tool>/<role>.rb
-# Roles & Profiles: some use "role", others use "roles". 
+# Roles & Profiles: some use "role", others use "roles".
 # Task metadata allows for both naming conventions; "role" and "roles".
 # Example usage with bolt (running from the control-repo dir):
 #   bolt task run test::roles -n webserver-01.local --modulepath . --run-as root --params '{ "test_tool": "inspec" , "test_file": "web_server.rb" }'
@@ -16,10 +16,10 @@ require 'puppet'
 require 'facter'
 
 os_tmp = case Facter.value(:kernel)
-  when 'Darwin'  ; '/Users/Shared/tmp'  
-  when 'Linux'   ; '/tmp' 
-  when 'Windows' ; 'c:/tmp'
-end
+         when 'Darwin' then '/Users/Shared/tmp'
+         when 'Linux' then '/tmp'
+         when 'Windows' then 'c:/tmp'
+         end
 
 params            = JSON.parse(STDIN.read)
 task_name         = params['_task'].split('::').last
