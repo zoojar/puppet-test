@@ -2,7 +2,7 @@
 # This task picks up a test for a given role
 # Store your tests at: <control-repo>/site/roles/files/tests/<test_tool>/<role>.rb
 # Roles & Profiles: some use "role", others use "roles"
-# Task metadata allows for both naming conventions; "role" and "roles"
+# Task metadata allows for both naming conventions; "role" and "roles"
 # Example usage with bolt (running from the control-repo dir):
 #   bolt task run test::roles -n webserver-01.local --modulepath . --run-as root --params '{ "test_tool": "inspec" , "test_file": "web_server.rb" }'
 #   It does the following things:
