@@ -40,14 +40,14 @@ def build_test_file_path(test_files_dir, test_tool, test_file, role)
   test_file = "#{role}.rb" unless role.nil?
   if test_file.empty?
     facter_role = Facter.value(':role')
-    unless (facter_role.strip).empty? then
-      test_file = "#{facter_role}.rb"
-    else
+    if facter_role.strip.empty?
       raise [
         '# Unable to detect this node\'s role using facter.',
         '# You could try speficying a test_file as a parameter to this task.',
-        '# eg. test_file=web_server.rb'
+        '# eg. test_file=web_server.rb',
       ].join("\n")
+    else
+      test_file = "#{facter_role}.rb"
     end
   end
   File.join(test_files_dir, test_tool, test_file)
@@ -73,16 +73,12 @@ begin
     require_relative File.join(workspace, 'test', 'tasks', 'install_gem.rb')
     install_gem(gem_bin, test_tool, test_tool_version, test_tool_dir)
   end
-
   # determine absolute path of test file to be executed
   test_file = build_test_file_path(File.join(workspace, test_files_dir), test_tool, test_file, role)
-
   # load gems
   $LOAD_PATH.unshift(*Dir.glob(File.expand_path("#{test_tool_dir}/**/lib", __FILE__)))
-
   # execute testing
   run(test_tool, test_file, report_format)
-
 rescue Puppet::Error => e
   # handle failure and exit
   puts({ status: 'failure', error: e.message }.to_json)
