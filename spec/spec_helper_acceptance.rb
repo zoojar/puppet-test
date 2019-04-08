@@ -15,7 +15,7 @@ install_module_dependencies_on(hosts)
 
 # Bolt helper task
 def task_run(task_name = '', target = '', config = '', inventory = '', params = '')
-  task_name = 'test::role' if task_name.empty?
+  task_name = 'role' if task_name.empty?
   target = 'default' if target.empty?
   config = { 'modulepath' => RSpec.configuration.module_path } if config.empty?
   inventory = hosts_to_inventory if inventory.empty?
