@@ -8,6 +8,9 @@ cache:
   paths:
     - vendor/bundle
 
+ services:
+   - docker:dind
+
 before_script:
   - bundle -v
   - rm Gemfile.lock || true
@@ -53,5 +56,10 @@ acceptance_with_puppet6_centos7:
     BEAKER_set: docker/centos-7
     RBENV_VERSION: '2.5.1'
     BEAKER_TESTMODE: 'apply'
+    DOCKER_HOST: tcp://docker:2375/
+    # When using dind, it's wise to use the overlayfs driver for
+    # improved performance.
+    DOCKER_DRIVER: overlay2
+
   script:
     - bundle exec rake beaker
