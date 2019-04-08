@@ -15,6 +15,7 @@
 /junit/
 /log/
 /pkg/
+!/spec/fixtures/modules/role/files/tests/serverspec/example_pass.rb
 /spec/fixtures/manifests/
 /spec/fixtures/modules/
 /tmp/
