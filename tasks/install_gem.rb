@@ -35,6 +35,5 @@ begin
   install_gem(gem_bin, gem, version, install_dir)
 rescue Puppet::Error => e
   # handle failure and exit
-  puts({ status: 'failure', error: e.message }.to_json)
-  exit 1
+  puts({ status: 'Notice', error: e.message }.to_json)
 end
