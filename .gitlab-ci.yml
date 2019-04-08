@@ -40,15 +40,15 @@ parallel_spec-Ruby 2.4.4-Puppet ~> 5.0:
   variables:
     PUPPET_GEM_VERSION: '~> 5.0'
 
-acceptance_with_puppet5_centos7:
+acceptance_with_puppet6_centos7:
   stage: acceptance
   variables:
-    BEAKER_PUPPET_COLLECTION: puppet5
-    PUPPET_GEM_VERSION: "~> 5.0"
+    BEAKER_PUPPET_COLLECTION: puppet6
+    PUPPET_GEM_VERSION: "~> 6.0"
     GEM_BOLT: 'true'
     PUPPET_INSTALL_TYPE: 'agent'
     BEAKER_IS_PE: 'no'
-    BEAKER_PUPPET_COLLECTION: 'puppet5'
+    BEAKER_PUPPET_COLLECTION: 'puppet6'
     BEAKER_debug: 'true '
     BEAKER_set: 'centos-7-x64'
     RBENV_VERSION: '2.5.1'
