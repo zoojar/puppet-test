@@ -48,7 +48,6 @@ parallel_spec-Ruby 2.5.1-Puppet ~> 6.0:
   services:
     - docker:dind
   variables:
-    DOCKER_HOST: tcp://docker:2375
     DOCKER_DRIVER: 'overlay2'
     GEM_BOLT: 'true'
     PUPPET_GEM_VERSION: '~> 6.0'
