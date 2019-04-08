@@ -61,4 +61,5 @@ acceptance_with_puppet6_centos7:
     DOCKER_DRIVER: overlay2
 
   script:
+    - bundle exec bolt task show
     - bundle exec rake beaker
