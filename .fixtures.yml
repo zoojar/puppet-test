@@ -4,4 +4,4 @@
 fixtures:
   symlinks:
      test: "#{source_dir}"
-     role: "#{source_dir}/spec/fixtures/modules/role/"
+     role: "#{source_dir}/spec/fixtures/site/role/"
