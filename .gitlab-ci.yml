@@ -46,6 +46,7 @@ parallel_spec-Ruby 2.5.1-Puppet ~> 6.0:
   script:
     - bundle exec rake beaker
   variables:
+    DOCKER_HOST: tcp://docker:2375
     PUPPET_GEM_VERSION: '~> 6.0'
     PUPPET_INSTALL_TYPE: 'agent'
     BEAKER_debug: 'true'
