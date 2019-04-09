@@ -50,9 +50,13 @@ def build_test_file_path(test_files_dir, test_tool, test_file, role)
     end
   end
   abs_test_file = File.join(test_files_dir, test_tool, test_file)
-  File.file?(abs_test_file) ? return abs_test_file : raise ["test_file does not exist at: #{abs_test_file}!",
-                                                            'Make sure test files exist in your control repo,',
-                                                            '(at site/roles/files/tests/)'].join(' ')
+  if File.file?(abs_test_file) then
+    return abs_test_file
+  else
+    raise ["test_file does not exist at: #{abs_test_file}!",
+           'Make sure test files exist in your control repo,',
+           '(at site/roles/files/tests/)'].join(' ')
+  end
 end
 
 def run(test_tool, test_file, report_format)
