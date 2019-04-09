@@ -50,9 +50,9 @@ def build_test_file_path(test_files_dir, test_tool, test_file, role)
     end
   end
   abs_test_file = File.join(test_files_dir, test_tool, test_file)
-  raise ["test_file does not exist at: #{abs_test_file}!",
-         'Make sure test files exist in your control repo,',
-         '(at site/roles/files/tests/)'].join(' ') unless File.file?(abs_test_file)
+  unless File.file?(abs_test_file) raise ["test_file does not exist at: #{abs_test_file}!",
+                                          'Make sure test files exist in your control repo,',
+                                          '(at site/roles/files/tests/)'].join(' ')
   return abs_test_file
 end
 
@@ -74,17 +74,13 @@ begin
   unless params['tool_installed']
     # install gems for test tooling
     require_relative File.join(params['_installdir'], 'test', 'tasks', 'install_gem.rb')
-    install_gem(params['gem_bin'],
-                params['test_tool'],
-                params['test_tool_version'],
-                params['test_tool_dir'])
+    install_gem(params['gem_bin'], params['test_tool'], params['test_tool_version'], params['test_tool_dir'])
   end
   # determine absolute path of test file to be executed
-  abs_test_file = build_test_file_path(File.join(params['_installdir'], 
-                                                 params['test_files_dir']),
-                                                 params['test_tool'],
-                                                 params['test_file'],
-                                                 params['role'])
+  abs_test_file = build_test_file_path(File.join(params['_installdir'], params['test_files_dir']),
+                                       params['test_tool'],
+                                       params['test_file'],
+                                       params['role'])
   # load gems
   $LOAD_PATH.unshift(*Dir.glob(File.expand_path("#{params['test_tool_dir']}/**/lib", __FILE__)))
   # execute testing
