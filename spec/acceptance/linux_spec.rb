@@ -7,11 +7,13 @@ describe 'test::role task', unless: os[:family] == 'windows' do
 
   windows = os[:family] == 'windows'
 
-  describe 'serverspec' do
-    it 'executes serverspec', unless: windows do
-      # apply_manifest_on(default, "file { 'rsyslog': ensure => absent, }")
-      result = task_run('test::role', '', '', '', 'test_tool' => 'serverspec', 'test_file' => 'example_pass.rb')
-      expect(result[0]).to eq('success')
+  describe 'test tool serverspec' do
+    it 'runs a passing test successfully', unless: windows do
+      task_result = task_run('test::role', '', '', '', 'test_tool' => 'serverspec', 'test_file' => 'example_pass.rb')
+      expect(task_result[0][status]).to eq('success')
+    end
+    it 'installs serverspec gem', unless: windows do
+      expect(shell('ls /tmp/puppet_test/serverspec/gems/serverspec*/serverspec.gemspec').exit_code).to eq(0)
     end
   end
 end
