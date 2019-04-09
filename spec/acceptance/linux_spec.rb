@@ -25,8 +25,8 @@ describe 'test::role task', unless: os[:family] == 'windows' do
       $task_result = task_run('test::role', '', '', '', 'test_tool' => 'serverspec')
       expect($task_result[0]['status']).to eq('failure')
     end
-    it 'returns helpful output', unless: windows do
-      expect($task_result[0]['result']['_output']).to match(%r{\d+\sexamples,\s0\sfailures})
+    it 'returns helpful error message', unless: windows do
+      expect($task_result[0]['result']['_error']).to match(%r{\d+\sexamples,\s0\sfailures})
     end
   end
   
