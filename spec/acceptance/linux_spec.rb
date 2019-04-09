@@ -20,7 +20,7 @@ describe 'test::role task', unless: os[:family] == 'windows' do
 
   describe 'test_tool=serverspec, test_file=example_pass.rb' do
     it 'installs serverspec gem', unless: windows do
-      task_result = task_run('test::role', '', '', '', 'test_tool' => 'serverspec', 'test_file' => 'example_pass.rb')
+      task_run('test::role', '', '', '', 'test_tool' => 'serverspec', 'test_file' => 'example_pass.rb')
       expect(shell('ls /tmp/puppet_test/serverspec/gems/serverspec*/serverspec.gemspec').exit_code).to eq(0)
     end
     it 'runs a passing test successfully', unless: windows do
