@@ -18,11 +18,8 @@ def install_gem(gem_bin, gem, version, install_dir)
     '-v', version
   ].shelljoin
   stdout, stderr, exitcode = Open3.capture3(cmd)
-  if exitcode == 0
-    puts "gem #{gem} installed at #{install_dir}"
-  else
-    raise "Failed to install gem #{gem} using cmd: #{cmd} : #{stderr} #{stdout}"
-  end
+  raise "Failed to install gem #{gem} using cmd: #{cmd} : #{stderr} #{stdout}" unless exitcode == 0
+  puts "gem #{gem} installed at #{install_dir}"
 end
 
 begin
