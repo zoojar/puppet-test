@@ -14,7 +14,7 @@ require 'json'
 require 'open3'
 require 'puppet'
 require 'facter'
-  
+
 os_tmp = case Facter.value(:kernel)
          when 'Darwin' then '/Users/Shared/tmp'
          when 'Linux' then '/tmp'
@@ -41,22 +41,17 @@ def build_test_file_path(test_files_dir, test_tool, test_file, role)
   if test_file.to_s.empty?
     facter_role = Facter.value(:role).to_s
     if facter_role.strip.empty?
-      raise [ 'Tried, but unable to detect this node\'s role using facter.',
-        'Did you mean to provide a test_file parameter to this task?',
-        'eg: test_file=web_server.rb',
-      ].join(" ")
+      raise ['Tried, but unable to detect this node\'s role using facter.',
+             'Did you mean to provide a test_file parameter to this task?',
+             'eg: test_file=web_server.rb'].join(' ')
     else
       test_file = "#{facter_role}.rb"
     end
   end
   abs_test_file = File.join(test_files_dir, test_tool, test_file)
-  if File.file?(abs_test_file) then 
-    return abs_test_file
-  else
-    raise [ "test_file does not exist at: #{abs_test_file}!",
-      "Make sure test files exist in your control repo (at site/roles/files/tests/)",
-    ].join(" ")
-  end
+  File.file?(abs_test_file) ? return abs_test_file : raise ["test_file does not exist at: #{abs_test_file}!",
+                                                            'Make sure test files exist in your control repo,',
+                                                            '(at site/roles/files/tests/)'].join(' ')
 end
 
 def run(test_tool, test_file, report_format)
@@ -78,21 +73,21 @@ begin
     # install gems for test tooling
     require_relative File.join(params['_installdir'], 'test', 'tasks', 'install_gem.rb')
     install_gem(params['gem_bin'],
-      params['test_tool'],
-      params['test_tool_version'],
-      params['test_tool_dir'])
+                params['test_tool'],
+                params['test_tool_version'],
+                params['test_tool_dir'])
   end
   # determine absolute path of test file to be executed
   abs_test_file = build_test_file_path(File.join(params['_installdir'], 
-    params['test_files_dir']),
-    params['test_tool'],
-    params['test_file'],
-    params['role'])
+                                                 params['test_files_dir']),
+                                                 params['test_tool'],
+                                                 params['test_file'],
+                                                 params['role'])
   # load gems
   $LOAD_PATH.unshift(*Dir.glob(File.expand_path("#{params['test_tool_dir']}/**/lib", __FILE__)))
   # execute testing
   result = run(params['test_tool'], abs_test_file, params['report_format'])
-  if params['return_status'] then exit result else exit 0 end
+  params['return_status'] ? exit result : exit 0
 rescue => e
   puts({ status: 'failure', error: e.message }.to_json)
   exit 1

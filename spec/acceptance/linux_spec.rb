@@ -14,7 +14,7 @@ describe 'test::role task', unless: os[:family] == 'windows' do
     end
     it 'returns helpful error message', unless: windows do
       task_result = task_run('test::role', '', '', '', 'test_tool' => 'serverspec')
-      expect(task_result[0]['result']['_error']).to match(%r{\d+\sexamples,\s0\sfailures})
+      expect(task_result[0]['result']['_output']).to match(%r{unable\sto\sdetect\sthis\snode.*\srole\susing\sfacter})
     end
   end
 
