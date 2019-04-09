@@ -39,7 +39,7 @@ def build_test_file_path(test_files_dir, test_tool, test_file, role)
   # if no role or test_file is specifed then we try to determine the target node's role.
   test_file = "#{role}.rb" unless role.nil?
   if test_file.to_s.empty?
-    facter_role = "#{Facter.value(':role')}"
+    facter_role = Facter.value(':role').to_s
     if facter_role.to_s.strip.empty?
       raise [
         '# Unable to detect this node\'s role using facter.',

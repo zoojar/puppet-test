@@ -1,6 +1,6 @@
 {
   "name": "zoojar-test",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "author": "David Newton",
   "summary": "",
   "license": "Apache-2.0",
@@ -11,12 +11,6 @@
   "operatingsystem_support": [
     {
       "operatingsystem": "CentOS",
-      "operatingsystemrelease": [
-        "7"
-      ]
-    },
-    {
-      "operatingsystem": "OracleLinux",
       "operatingsystemrelease": [
         "7"
       ]
