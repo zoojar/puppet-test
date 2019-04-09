@@ -27,7 +27,7 @@ end
 
 begin
   stdin = STDIN.read
-  unless stdin.empty?
+  unless stdin.to_s.empty?
     params = JSON.parse(stdin)
     os_tmp = case Facter.value(:kernel)
              when 'Darwin' then '/Users/Shared/tmp'

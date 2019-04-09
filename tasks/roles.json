@@ -30,6 +30,10 @@
     "role": {
       "type": "Optional[String]",
       "description": "Target node's role - this task uses this value as the test file name, prepending the test_tool to it's path and appending '.rb' to the role name."
+    },
+    "return_status": {
+      "type": "Optional[Boolean]",
+      "description": "Return the last exit code up to the task; a task shows as failed if the tests fail."
     }
   },
   "files": ["test/tasks/","roles/files/tests/"],
