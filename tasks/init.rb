@@ -4,7 +4,8 @@
 # Roles & Profiles: some use "role", others use "roles"
 # Task metadata allows for both naming conventions; "role" and "roles"
 # Example usage with bolt (running from the control-repo dir):
-#   bolt task run test::roles -n webserver-01.local --modulepath . --run-as root --params '{ "test_tool": "inspec" , "test_file": "web_server.rb" }'
+#   bolt task run test::roles -n webserver-01.local --modulepath . \
+#     --params '{ "test_tool": "inspec" , "test_file": "web_server.rb" }'
 #   It does the following things:
 #     1. Installs the inspec gems on webserver-01.local in test_tool_dir (default: /tmp/puppet_test/gems)
 #     2. Copies the files from <control-repo>/site/roles/files/tests/inspec/web_server.rb
@@ -87,7 +88,11 @@ begin
   $LOAD_PATH.unshift(*Dir.glob(File.expand_path("#{params['test_tool_dir']}/**/lib", __FILE__)))
   # execute testing
   result = run(params['test_tool'], abs_test_file, params['report_format'])
-  params['return_status'] ? exit result : exit 0
+  if params['return_status']
+    exit result
+  else
+    exit 0
+  end
 rescue => e
   puts({ status: 'failure', error: e.message }.to_json)
   exit 1
