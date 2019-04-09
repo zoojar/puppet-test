@@ -39,7 +39,7 @@ describe 'test::role task', unless: os[:family] == 'windows' do
       expect(task_result[0]['status']).to eq('success')
     end
   end
-  
+
   describe 'test_tool=serverspec, test_file=example_pass.rb, return_result=true' do
     it 'returns exit code from test - pass', unless: windows do
       task_result = task_run('test::role', '', '', '', 'test_tool' => 'serverspec', 'test_file' => 'example_pass.rb', 'return_result' => true)
