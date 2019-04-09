@@ -28,8 +28,8 @@ test_tool         = params['test_tool']         ||= 'serverspec'
 tool_installed    = params['tool_installed']    ||= false
 test_tool_version = params['test_tool_version'] ||= '> 0'
 test_tool_dir     = params['test_tool_dir']     ||= File.join(os_tmp, 'puppet_test', test_tool)
-test_file         = params['test_file']
-role              = params['role']
+test_file         = params['test_file']         ||= ''
+role              = params['role']              ||= nil
 test_files_dir    = params['test_files_dir']    ||= File.join(task_name, 'files', 'tests')
 gem_bin           = params['gem_bin']           ||= File.join('/opt', 'puppetlabs', 'puppet', 'bin', 'gem')
 report_format     = params['report_format']     ||= 'documentation'
