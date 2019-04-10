@@ -17,9 +17,6 @@ describe 'test::role with inspec' do
 
   describe 'test_tool=inspec, test_file=example_pass.rb' do
     it 'installs inspec gem' do
-      # inspec gem install requires packages: gcc, gcc-c++
-      install_package(host, 'gcc')
-      install_package(host, 'gcc-c++')
       task_run('test::role', '', '', '', 'test_tool' => 'inspec', 'test_file' => 'example_pass.rb')
       expect(shell('ls /tmp/puppet_test/inspec/gems/inspec*/inspec.gemspec').exit_code).to eq(0)
     end
