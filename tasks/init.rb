@@ -58,20 +58,6 @@ def build_test_file_path(test_files_dir, test_tool, test_file, role)
   abs_test_file
 end
 
-def run(test_tool, test_file, report_format)
-  require test_tool
-  case test_tool
-  when 'inspec'
-    runner = Inspec::Runner.new('reporter' => [report_format])
-    runner.add_target(test_file)
-    runner.run
-  when 'serverspec'
-    RSpec::Core::Runner.run([test_file, '-c', '-f', report_format])
-  when 'minitest'
-    load test_file
-  end
-end
-
 begin
   unless params['tool_installed']
     # install gems for test tooling
@@ -86,6 +72,7 @@ begin
   # load gems
   $LOAD_PATH.unshift(*Dir.glob(File.expand_path("#{params['test_tool_dir']}/**/lib", __FILE__)))
   # execute testing
+  require_relative File.join(params['_installdir'], 'test', 'tasks', "#{params['test_tool']}.rb")
   result = run(params['test_tool'], abs_test_file, params['report_format'])
   if params['return_status']
     exit result

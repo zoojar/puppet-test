@@ -1,7 +1,7 @@
 {
   "puppet_task_version": 1,
   "supports_noop": false,
-  "description": "Executes tests via serverspec/inspec",
+  "description": "Executes tests via various test tools; minitest, serverspec, inspec",
   "parameters": {
     "test_tool": {
       "type": "Optional[String]",

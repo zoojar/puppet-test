@@ -4,7 +4,6 @@ require 'spec_helper_acceptance'
 describe 'test::role task' do
   include Beaker::TaskHelper::Inventory
   include BoltSpec::Run
-
   describe 'test_tool=serverspec' do
     it 'fails to run' do
       task_result = task_run('test::role', '', '', '', 'test_tool' => 'serverspec')

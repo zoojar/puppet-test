@@ -45,7 +45,7 @@ describe port(80) do
 end
 ```
 
-
+See `spec/fixtures/site/role/files/tests` in this module for more examples.
 
 
 
