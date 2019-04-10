@@ -31,18 +31,18 @@ describe 'test::role task' do
   end
 
   describe 'test_tool=serverspec, test_file=example_pass.rb, return_status=false' do
-    it 'does not return the exit code from the test' do
+    it 'does not return the status from the test' do
       task_result = task_run('test::role', '', '', '', 'test_tool' => 'serverspec', 'test_file' => 'example_fail.rb', 'return_status' => false)
       expect(task_result[0]['status']).to eq('success')
     end
   end
 
   describe 'test_tool=serverspec, test_file=example_pass.rb, return_status=true' do
-    it 'returns exit code from test - pass' do
+    it 'returns status from test - success' do
       task_result = task_run('test::role', '', '', '', 'test_tool' => 'serverspec', 'test_file' => 'example_pass.rb', 'return_status' => true)
       expect(task_result[0]['status']).to eq('success')
     end
-    it 'returns exit code from test - fail' do
+    it 'returns status from test - failure' do
       task_result = task_run('test::role', '', '', '', 'test_tool' => 'serverspec', 'test_file' => 'example_fail.rb', 'return_status' => true)
       expect(task_result[0]['status']).to eq('failure')
     end

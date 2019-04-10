@@ -122,6 +122,13 @@ Running InSpec on target nodes requires the following packages ot also be instal
 
 ## Development
 
+Acceptance testing via gitlab runner cli:
+```gitlab-runner exec docker parallel_acceptance_with_puppet6_ubuntu1404 --docker-image ruby:2.5 --docker-privileged```
+
+Syntax, lint, metadata_lint +++:
+`GEM_BOLT=true bundle install --path .vendor/bundle`
+`bundle exec rake syntax lint metadata_lint check:symlinks check:git_ignore check:dot_underscore check:test_file rubocop`
+
 Contributions welcome.
 
 ## Release Notes/Contributors/Etc. **Optional**
