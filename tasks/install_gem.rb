@@ -19,9 +19,10 @@ def install_gem(gem_bin, gem, version, install_dir)
   ].shelljoin
   begin
     result = Open3.capture3(cmd)
+    raise "Failed to install gem #{gem} using cmd: #{cmd} : #{result}" unless result[0].zero?
     puts "gem #{gem} installed at #{install_dir}"
-  rescue
-    raise "Failed to install gem #{gem} using cmd: #{cmd} : #{result}"
+  rescue => e
+    puts({ status: 'failure', error: e.message }.to_json)
   end
 end
 
@@ -40,8 +41,7 @@ begin
     version     = params['version'] ||= '> 0' # latest
     install_gem(gem_bin, gem, version, install_dir)
   end
-rescue Puppet::Error => e
-  # handle failure and exit
+rescue => e
   puts({ status: 'failure', error: e.message }.to_json)
   exit 1
 end
