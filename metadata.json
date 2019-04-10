@@ -1,6 +1,6 @@
 {
   "name": "zoojar-test",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": "David Newton",
   "summary": "Tasks that execute tests against roles using various test tools such as minitest, serverspec & inspec",
   "license": "Apache-2.0",
@@ -19,7 +19,6 @@
     {
       "operatingsystem": "CentOS",
       "operatingsystemrelease": [
-        "5",
         "6",
         "7"
       ]
@@ -27,7 +26,6 @@
     {
       "operatingsystem": "OracleLinux",
       "operatingsystemrelease": [
-        "5",
         "6",
         "7"
       ]
@@ -35,7 +33,6 @@
     {
       "operatingsystem": "RedHat",
       "operatingsystemrelease": [
-        "5",
         "6",
         "7"
       ]
@@ -43,6 +40,7 @@
     {
       "operatingsystem": "Ubuntu",
       "operatingsystemrelease": [
+        "14.04",
         "16.04",
         "18.04"
       ]
