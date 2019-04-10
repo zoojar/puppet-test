@@ -8,7 +8,8 @@
 #
 #
 #    bolt plan run test::role --modulepath . --run-as root --params \
-#    '{"target":"webserver.local","test_params":{"test_tool":"serverspec","test_file":"webserver.rb"},"ctrl_params":{"tmp_dir":"/Users/Shared/tmp"}}'
+#    '{"target":"webserver.local","test_params":{"test_tool":"serverspec", \
+#    "test_file":"webserver.rb"},"ctrl_params":{"tmp_dir":"/Users/Shared/tmp"}}'
 #
 #
 # NB. If the 'test_file' param is omitted then roles will be auto-detected using the target's 'role' fact

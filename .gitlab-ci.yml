@@ -118,18 +118,3 @@ parallel_acceptance_with_puppet6_ubuntu1804:
     DOCKER_DRIVER: overlay2
   script:
     - bundle exec rake task_acceptance
-
-parallel_acceptance_with_puppet6_windows2016:
-  stage: acceptance
-  variables:
-    BEAKER_PUPPET_COLLECTION: puppet6
-    PUPPET_GEM_VERSION: "~> 6.0"
-    GEM_BOLT: 'true'
-    PUPPET_INSTALL_TYPE: 'agent'
-    BEAKER_IS_PE: 'no'
-    BEAKER_debug: 'true'
-    BEAKER_set: windows-2016
-    RBENV_VERSION: '2.5.1'
-    BEAKER_TESTMODE: 'apply'
-  script:
-    - bundle exec rake task_acceptance

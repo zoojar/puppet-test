@@ -1,0 +1,13 @@
+HOSTS:
+  windows-2012:
+    roles:
+      - default
+      - agent
+    platform: windows-server-amd64
+    hypervisor: vagrant
+    box: opentable/win-2012r2-standard-amd64-nocm
+    communicator: bitvise
+    user: administrator
+CONFIG:
+  log_level: verbose
+  type: git
