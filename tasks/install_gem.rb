@@ -18,9 +18,9 @@ def install_gem(gem_bin, gem, version, install_dir)
     '-v', version
   ].shelljoin
   begin
-    result = Open3.capture3(cmd)
-    raise "Failed to install gem #{gem} using cmd: #{cmd} : #{result}" unless result[0].zero?
-    puts "gem #{gem} installed at #{install_dir}"
+    stdout, stderr, exitcode = Open3.capture3(cmd)
+    raise "Failed to install gem #{gem} using cmd: #{cmd} : #{result}" unless exitcode.to_int.zero? && stderr.to_s.empty?
+    puts "gem #{gem} installed at #{install_dir}: #{stdout} #{stderr}"
   rescue => e
     puts({ status: 'failure', error: e.message }.to_json)
   end
