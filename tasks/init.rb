@@ -1,6 +1,6 @@
 #!/opt/puppetlabs/puppet/bin/ruby
 # This task picks up a test for a given role
-# Store your tests at: <control-repo>/site/roles/files/tests/<test_tool>/<role>.rb
+# Store your tests at: <control-repo>/site-modules/roles/files/tests/<test_tool>/<role>.rb
 # Roles & Profiles: some use "role", others use "roles"
 # Task metadata allows for both naming conventions; "role" and "roles"
 # Example usage with bolt (running from the control-repo dir):
@@ -8,7 +8,7 @@
 #     --params '{ "test_tool": "inspec" , "test_file": "web_server.rb" }'
 #   It does the following things:
 #     1. Installs the inspec gems on webserver-01.local in test_tool_dir (default: /tmp/puppet_test/gems)
-#     2. Copies the files from <control-repo>/site/roles/files/tests/inspec/web_server.rb
+#     2. Copies the files from <control-repo>/site-modules/roles/files/tests/inspec/web_server.rb
 #     3. Executes inspec runner with the web_server.rb spec and returns the report as stdout
 
 require 'json'
@@ -53,7 +53,7 @@ def build_test_file_path(test_files_dir, test_tool, test_file, role)
   unless File.file?(abs_test_file)
     raise ["test_file does not exist at: #{abs_test_file}!",
            'Make sure test files exist in your control repo,',
-           '(at site/roles/files/tests/)'].join(' ')
+           '(at site-modules/roles/files/tests/)'].join(' ')
   end
   abs_test_file
 end

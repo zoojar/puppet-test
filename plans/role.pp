@@ -1,8 +1,8 @@
 # This plan should be run from a Puppet server or a linux host with capability for pcp transport to target nodes
 # Example usage:
-#  IMPORTANT: Tests should be stored with roles at site/roles/files/tests (or site/role/files/tests),
+#  IMPORTANT: Tests should be stored with roles at site-modules/roles/files/tests (or site-modules/role/files/tests),
 #  for example: 
-#    `<control-repo>/site/roles/files/tests/<test_tool>/<role>.rb`
+#    `<control-repo>/site-modules/roles/files/tests/<test_tool>/<role>.rb`
 #  This plan will fail if this path is not accessible!
 #  If running via Bolt; roles must be on bolt's configured modulepath - run this from your control-repo:
 #
@@ -28,7 +28,7 @@ plan test::role(
       'Aborting Plan: No role or roles module found on the module path.',
       'This task picks up a test for a given role.',
       'Store your tests at: ',
-      '<control-repo>/site/roles/files/tests/<test_tool>/<role>.rb',
+      '<control-repo>/site-modules/roles/files/tests/<test_tool>/<role>.rb',
     ].join(' '))
   }
 

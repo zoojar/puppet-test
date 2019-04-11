@@ -35,17 +35,17 @@ Your tests should live with your code...
 This task assumes that you are using [Roles & Profiles](https://puppet.com/docs/pe/2019.0/the_roles_and_profiles_method.html) in your control-repo.
 The task instructs the test tool to pick up a test file for a given role from files in your role(s) module.
 
-For example: `<control-repo>/site/roles/files/tests/<test_tool>/<role>.rb`
+For example: `<control-repo>/site-modules/roles/files/tests/<test_tool>/<role>.rb`
 
 To add an inspec test for your "web_server" role, add a test file in your control-repo (or role module if external):
->`<control-repo>/site/roles/files/tests/inspec/web_server.rb`
+>`<control-repo>/site-modules/roles/files/tests/inspec/web_server.rb`
 ```ruby
 describe port(80) do
   it { should be_listening }
 end
 ```
 
-See `spec/fixtures/site/role/files/tests` in this module for more examples.
+See `spec/fixtures/site-modules/role/files/tests` in this module for more examples.
 
 
 
@@ -79,7 +79,7 @@ This does the following things:
 1. Installs the InSpec gems on webserver-01.local in gem_dir (/tmp/puppet_test/gems)
 2. Auto-detects the node's role ("web_server") using Facter.
 3. Executes InSpec runner with the "web_server.rb" test file:
-> *control-repo*/site/**roles**/files/tests/***inspec***/web_server.rb
+> *control-repo*/site-modules/**roles**/files/tests/***inspec***/web_server.rb
 4. Returns the test report from InSpec 
 
 
@@ -96,7 +96,7 @@ This does the following things:
 1. Installs the InSpec gems on webserver-01.local in gem_dir (/tmp/puppet_test/gems)
 2. Copies the files from 
 3. Executes InSpec runner with the test file: 
-> *control-repo*/site/**roles**/files/tests/***inspec***/***another_test.rb*** 
+> *control-repo*/site-modules/**roles**/files/tests/***inspec***/***another_test.rb*** 
 4. Returns the test report from InSpec in json format; [InSpec Reporters](https://www.inspec.io/docs/reference/reporters/)
 
 
