@@ -6,6 +6,7 @@ describe 'test::role with inspec' do
   include BoltSpec::Run
   describe 'test_tool=inspec' do
     it 'fails to run' do
+      install_package(host, 'build-essential')
       task_result = task_run('test::role', '', '', '', 'test_tool' => 'inspec')
       expect(task_result[0]['status']).to eq('failure')
     end
