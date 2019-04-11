@@ -6,6 +6,7 @@ describe 'test::role with inspec' do
   include BoltSpec::Run
   describe 'test_tool=inspec' do
     it 'fails to run' do
+      # inspec requires build-essential for gem install boooooo
       shell('puppet resource package build-essential ensure=installed')
       task_result = task_run('test::role', '', '', '', 'test_tool' => 'inspec')
       expect(task_result[0]['status']).to eq('failure')

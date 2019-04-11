@@ -22,7 +22,7 @@ describe 'test::role with minitest' do
     end
     it 'returns output' do
       task_result = task_run('test::role', '', '', '', 'test_tool' => 'minitest', 'test_file' => 'example_pass.rb')
-      expect(task_result[0]['result']['_output']).to match(%r{\d+\sruns,\s0\sfailures})
+      expect(task_result[0]['result']['_output']).to match(%r{2\sruns,\s2\sassertions,\s0\sfailures,\s0\serrors,\s0\skips})
     end
   end
 
