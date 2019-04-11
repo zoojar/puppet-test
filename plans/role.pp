@@ -73,7 +73,6 @@ plan test::role(
   $_test_tool      = $_test_params[test_tool]
   $_target_gem_dir = $_test_params[test_tool_install_dir]
 
-  
   # Stage the gems to tmp dir on the controller
   $_ctrl_gem_dir = "${_ctrl_params[tmp_dir]}/puppet_test/${$_test_tool}"
   unless $_ctrl_params[install_gem] == false {
