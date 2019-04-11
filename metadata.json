@@ -1,6 +1,6 @@
 {
   "name": "zoojar-test",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "author": "David Newton",
   "summary": "Tasks that execute tests against roles using various test tools such as minitest, serverspec & inspec",
   "license": "Apache-2.0",
