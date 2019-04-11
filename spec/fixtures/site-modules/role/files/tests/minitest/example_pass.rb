@@ -1,4 +1,3 @@
-require 'minitest/autorun'
 require 'open3'
 
 describe "file /etc/hosts" do

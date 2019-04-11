@@ -114,10 +114,29 @@ bolt plan run test::role --modulepath . --run-as root --params '{"target":"webse
 
 ## Limitations
 
-### InSpec: gcc gcc-c++
+### InSpec: gcc gcc-c++ / build-essential
 
 Running InSpec on target nodes requires the following packages ot also be installed on the target node: install: gcc gcc-c++. InSpec gem installation will fail without these present.
 
+### Plan and gem installs
+
+The plan can be used to install gems locally before copying to the target.
+This poses a potential problem - gem install/builds should be done in their respective target environment.
+
+To work around this;
+
+1. Install your gems locally in your target environment
+2. Copy them to your puppet server (controller) in:
+`/Users/Shared/tmp/puppet_test/serverspec/`
+3. Run the plan with the following controller parameters (ctrl_params):
+- "tmp_dir":"/Users/Shared/tmp" - the tmp dir for the location of the test tool gems
+- "install_gem":false - do not *install* the gem on the controller (just expect it to be there already staged)
+
+```bash
+bolt plan run test::role --modulepath . --run-as root --params '{"target":"webserver.local","test_params":{"test_tool":"serverspec" "test_file":"webserver.rb"},"ctrl_params":{"tmp_dir":"/Users/Shared/tmp","install_gem":false}}'
+```
+
+The plan will pick up the test tool gems and copy them to the target node.
 
 
 ## Development
