@@ -73,23 +73,25 @@ plan test::role(
   $_test_tool      = $_test_params[test_tool]
   $_target_gem_dir = $_test_params[test_tool_install_dir]
 
+  
   # Stage the gems to tmp dir on the controller
-  $_ctrlr_gem_dir = "${_ctrl_params[tmp_dir]}/puppet_test/${$_test_tool}"
-  run_task('test::install_gem', $controller, { gem => $_test_tool, install_dir => $_ctrlr_gem_dir })
-
+  $_ctrl_gem_dir = "${_ctrl_params[tmp_dir]}/puppet_test/${$_test_tool}"
+  unless $_ctrl_params[install_gem] == false {
+    run_task('test::install_gem', $controller, { gem => $_test_tool, install_dir => $_ctrl_gem_dir })
+  }
   if $target_kernel == 'Linux' and $_ctrl_params[compress_tool] {
     # Compress if target is linux, native file compression in windows...bleghhh
-    run_command("tar -zcf ${_ctrlr_gem_dir}/${_test_tool}.tar.gz ${_ctrlr_gem_dir}",
+    run_command("tar -zcf ${_ctrl_gem_dir}/${_test_tool}.tar.gz ${_ctrl_gem_dir}",
         $controller, '_catch_errors' => true, '_run_as' => 'root')
     # upload gems from controller to tmp dir on target
-    upload_file("${_ctrlr_gem_dir}/${_test_tool}.tar.gz", "${target_tmp_dir}/${_test_tool}.tar.gz",
+    upload_file("${_ctrl_gem_dir}/${_test_tool}.tar.gz", "${target_tmp_dir}/${_test_tool}.tar.gz",
         $target, '_catch_errors' => true, '_run_as' => 'root')
     # Extract
     run_command("mkdir -p ${_target_gem_dir} && tar -zxf ${target_tmp_dir}/${_test_tool}.tar.gz -C ${_target_gem_dir}",
         $target, '_catch_errors' => true, '_run_as' => 'root')
   } else {
     # upload tool
-    upload_file($_ctrlr_gem_dir, $_target_gem_dir, $target, '_catch_errors' => true, '_run_as' => 'root')
+    upload_file($_ctrl_gem_dir, $_target_gem_dir, $target, '_catch_errors' => true, '_run_as' => 'root')
   }
 
   # execute tests
