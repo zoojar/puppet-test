@@ -1,5 +1,5 @@
 # wrapper
 def run(test_tool, test_file, _report_format)
   require test_tool
-  load test_file
+  RSpec::Core::Runner.run([test_file, '-c', '-f', report_format])
 end
