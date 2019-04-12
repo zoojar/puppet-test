@@ -3,7 +3,7 @@ require 'json'
 require 'puppet'
 require 'facter'
 
-def install_gem(gem_bin, gem, version, install_dir)
+def install_gem(gem_bin, gem, version, install_dir, platform)
   require 'shellwords'
   require 'open3'
   # If HOME is not already set, set it.
@@ -11,15 +11,18 @@ def install_gem(gem_bin, gem, version, install_dir)
     require 'etc'
     ENV['HOME'] = Etc.getpwuid.dir
   end
+
   cmd = [
     gem_bin, 'install', gem,
     '-i', install_dir,
-    '--no-ri', '--no-rdoc',
-    '-v', version
-  ].shelljoin
+    '--no-ri', '--no-rdoc'
+  ]
+  cmd << '-v' << version unless version.empty?
+  cmd << '--platform' << platform unless platform.empty?
+  cmd = cmd.shelljoin
   begin
     stdout, stderr, exitcode = Open3.capture3(cmd)
-    raise "Failed to install gem #{gem} using cmd: #{cmd} : #{result}" unless exitcode.to_i.zero? && stderr.to_s.empty?
+    raise "Failed to install gem #{gem} using cmd: #{cmd} : #{stderr}" unless exitcode.to_i.zero? && stderr.to_s.empty?
     puts "gem #{gem} installed at #{install_dir}: #{stdout} #{stderr}"
   rescue => e
     puts({ status: 'failure', error: e.message }.to_json)
@@ -39,7 +42,8 @@ begin
     gem_bin     = params['gem_bin'] ||= File.join('/opt', 'puppetlabs', 'puppet', 'bin', 'gem')
     gem         = params['gem']
     version     = params['version'] ||= '> 0' # latest
-    install_gem(gem_bin, gem, version, install_dir)
+    platform    = params['platform']
+    install_gem(gem_bin, gem, version, install_dir, platform)
   end
 rescue => e
   puts({ status: 'failure', error: e.message }.to_json)

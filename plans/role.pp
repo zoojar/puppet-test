@@ -45,16 +45,20 @@ plan test::role(
   ## because bolt tasks delete their tmp dirs after executing.
   ### If unspecififed, detect target's tmp dir based on kernel
   $target_kernel = $test_params[kernel] ? {
-    undef => run_task('test::get_fact', $target, fact => 'kernel').first.value[_output],
+    undef   => run_task('test::get_fact', $target, fact => 'kernel').first.value[_output],
     default => $test_params[kernel]
   }
-  $target_tmp_dir = $target_kernel ? {
-    'Linux'   => '/tmp',
-    'Darwin'  => '/Users/Shared/tmp',
-    'Windows' => 'c:/tmp',
-    default   => '/tmp'
-  }
 
+  case $target_kernel {
+    /Linux|Darwin/: { $target_tmp_dir = '/tmp' ; $ruby_bin  = '/opt/puppetlabs/bin/puppet/ruby' }
+    'Windows':{ $target_tmp_dir = 'c:/temp' ; $ruby_bin  = 'c:/programdata/puppetlabs/puppet/bin/ruby' }
+    default: { raise('unsupported os') }
+  }
+  $target_platform = $test_params[platform] ? {
+    undef   => run_task('test::get_fact', $target, fact => 'rubyplatform').first.value[_output],
+    default => $test_params[platform]
+  }
+  notice "Target gem platform detected: ${target_platform}"
   $test_params_defaults = {
     tool_installed        => true,
     test_tool_install_dir => "${target_tmp_dir}/puppet_test/${test_params[test_tool]}",
@@ -76,7 +80,7 @@ plan test::role(
   # Stage the gems to tmp dir on the controller
   $_ctrl_gem_dir = "${_ctrl_params[tmp_dir]}/puppet_test/${$_test_tool}"
   unless $_ctrl_params[install_gem] == false {
-    run_task('test::install_gem', $controller, { gem => $_test_tool, install_dir => $_ctrl_gem_dir })
+    run_task('test::install_gem', $controller, { gem => $_test_tool, install_dir => $_ctrl_gem_dir, platform => $target_platform })
   }
   if $target_kernel == 'Linux' and $_ctrl_params[compress_tool] {
     # Compress if target is linux, native file compression in windows...bleghhh

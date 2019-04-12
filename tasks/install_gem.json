@@ -19,6 +19,10 @@
     "install_dir": {
       "type": "Optional[String]",
       "description": "gem install dir"
+    },
+    "platform": {
+      "type": "Optional[String]",
+      "description": "platform"
     }
   },
   "input_method": "stdin"
