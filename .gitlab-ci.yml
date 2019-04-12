@@ -8,6 +8,9 @@ cache:
   paths:
     - vendor/bundle
 
+`services:
+   - docker:dind
+
 before_script:
   - bundle -v
   - rm Gemfile.lock || true
