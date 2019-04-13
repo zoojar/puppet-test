@@ -8,8 +8,8 @@ cache:
   paths:
     - vendor/bundle
 
-`services:
-   - docker:dind
+services:
+  - docker:dind
 
 before_script:
   - bundle -v
