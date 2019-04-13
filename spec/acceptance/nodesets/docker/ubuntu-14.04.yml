@@ -3,7 +3,7 @@ HOSTS:
     platform: ubuntu-14.04-amd64
     hypervisor: docker
     image: ubuntu:14.04
-    docker_preserve_image: true
+    docker_preserve_image: false
     docker_cmd: '["/sbin/init"]'
     docker_image_commands:
       # ensure that upstart is booting correctly in the container
