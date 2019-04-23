@@ -1,9 +1,9 @@
 # frozen_string_literal: true
+
 require 'serverspec'
 require 'puppet_litmus'
 require 'bolt_spec/run'
 include PuppetLitmus
-
 
 # Bolt helper task
 def task_run(task_name = '', target = '', config = '', inventory = '', params = '')
@@ -21,8 +21,6 @@ RSpec.configure do |c|
   c.add_setting :module_path
   c.module_path = File.join(File.dirname(File.expand_path(__FILE__)), 'fixtures', 'modules')
 end
-
-
 
 if ENV['TARGET_HOST'].nil? || ENV['TARGET_HOST'] == 'localhost'
   puts 'Running tests against this machine !'
