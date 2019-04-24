@@ -2,7 +2,6 @@
 
 require 'serverspec'
 require 'puppet_litmus'
-require 'bolt_spec/run'
 include PuppetLitmus
 
 if ENV['TARGET_HOST'].nil? || ENV['TARGET_HOST'] == 'localhost'
