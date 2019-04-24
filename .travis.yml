@@ -39,9 +39,5 @@ matrix:
       - time bundle exec rake litmus:tear_down
       services: docker
       sudo: required
-branches:
-  only:
-    - master
-    - /^v\d/
 notifications:
   email: true
