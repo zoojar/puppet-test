@@ -4,10 +4,12 @@ require 'spec_helper_acceptance'
 describe 'run_task test, test_tool=minitest' do
   include Beaker::TaskHelper::Inventory
   include BoltSpec::Run
-  list_tasks()
+
   def bolt_config
     { 'modulepath' => RSpec.configuration.module_path }
   end
+
+  let(:bolt_inventory) { hosts_to_inventory.merge('features' => ['puppet-agent']) }
 
   it 'fails to run when no arguments are passed' do
     task_result = run_task('test::role', 'localhost', 'test_tool' => 'minitest')
