@@ -1,7 +1,10 @@
 # run a test task
 require 'spec_helper_acceptance'
+require 'bolt_spec/config'
+require 'bolt_spec/conn'
+require 'bolt_spec/files'
+require 'bolt_spec/integration'
 require 'bolt_spec/run'
-
 
 describe 'test_tool=minitest' do
   include BoltSpec::Run
