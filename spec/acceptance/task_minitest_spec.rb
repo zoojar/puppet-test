@@ -1,8 +1,8 @@
 # run a test task
 require 'spec_helper_acceptance'
+include BoltSpec::Run
 
 describe 'test::role with minitest' do
-  include BoltSpec::Run
   describe 'test_tool=minitest' do
     it 'fails to run' do
       task_result = run_task('test::role', '', '', '', 'test_tool' => 'minitest')
