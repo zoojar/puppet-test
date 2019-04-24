@@ -5,7 +5,6 @@
 require 'spec_helper_acceptance'
 
 describe 'plan test::role with minitest' do
-  include Beaker::TaskHelper::Inventory
   include BoltSpec::Run
   describe 'test_tool=minitest' do
     it 'fails to run' do
