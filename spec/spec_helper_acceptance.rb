@@ -5,14 +5,6 @@ require 'puppet_litmus'
 require 'bolt_spec/run'
 include PuppetLitmus
 
-RSpec.configure do |c|
-  # Readable test descriptions
-  c.formatter = :documentation
-
-  c.add_setting :module_path
-  c.module_path = File.join(File.dirname(File.expand_path(__FILE__)), 'fixtures', 'modules')
-end
-
 if ENV['TARGET_HOST'].nil? || ENV['TARGET_HOST'] == 'localhost'
   puts 'Running tests against this machine !'
   if Gem.win_platform?
