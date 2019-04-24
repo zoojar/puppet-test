@@ -2,8 +2,18 @@
 require 'spec_helper_acceptance'
 require 'bolt_spec/run'
 
+
 describe 'test_tool=minitest' do
   include BoltSpec::Run
+  include BoltSpec::Config
+  include BoltSpec::Conn
+  include BoltSpec::Files
+  include BoltSpec::Integration
+  include BoltSpec::Run
+
+  let(:conn) { conn_info('ssh') }
+  let(:modulepath) { fixture_path('modules') }
+  let(:config) { { 'modulepath' => modulepath } }
   it 'fails to run when no arguments are passed' do
     task_result = run_task('test::role', 'localhost', { 'test_tool' => 'minitest' })
     expect(task_result[0]['status']).to eq('failure')
