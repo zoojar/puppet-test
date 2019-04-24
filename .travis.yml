@@ -24,7 +24,7 @@ matrix:
     -
       bundler_args:
       dist: trusty
-      env: PLATFORM=centos:deb_puppet6
+      env: PLATFORM=centos:puppet6
       rvm: 2.5.1
       script:
       - time bundle exec rake 'litmus:provision[docker, centos:7]'
