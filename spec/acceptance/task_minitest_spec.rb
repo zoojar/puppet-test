@@ -4,6 +4,7 @@ require 'spec_helper_acceptance'
 describe 'run_task test, test_tool=minitest' do
   include Beaker::TaskHelper::Inventory
   include BoltSpec::Run
+  list_tasks()
   def bolt_config
     { 'modulepath' => RSpec.configuration.module_path }
   end
