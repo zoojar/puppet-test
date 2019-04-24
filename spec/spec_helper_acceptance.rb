@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'serverspec'
+require 'beaker-task_helper/inventory'
 require 'puppet_litmus'
 include PuppetLitmus
 
