@@ -5,7 +5,7 @@ describe 'test::role with inspec' do
   describe 'test_tool=inspec' do
     it 'fails to run' do
       # inspec requires build-essential for gem install
-      shell('puppet resource package build-essential ensure=installed')
+      run_shell('puppet resource package build-essential ensure=installed')
       task_result = task_run('test::role', 'test_tool' => 'inspec')
       expect(task_result[0]['status']).to eq('failure')
     end
