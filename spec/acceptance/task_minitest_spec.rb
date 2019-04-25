@@ -6,9 +6,9 @@ describe 'run_task test, test_tool=minitest' do
   config_data = { 'modulepath' => File.join(Dir.pwd, 'spec', 'fixtures', 'modules') }
   inventory_hash = inventory_hash_from_inventory_file
   target_node_name = ENV['TARGET_HOST'] if target_node_name.nil?
-
+  bolt_params = { config: config_data, inventory: inventory_hash }
   it 'fails to run when no arguments are passed' do
-    task_result = run_task('test::role', target_node_name, {'test_tool' => 'minitest'}, config: config_data, inventory: inventory_hash)
+    task_result = run_task('test::role', target_node_name, {'test_tool' => 'minitest'}, bolt_params )
     expect(task_result[0]['status']).to eq('failure')
   end
   it 'returns helpful error message when no arguments are passed' do
