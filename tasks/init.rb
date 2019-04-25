@@ -40,7 +40,6 @@ params['role']              = '' if params['role'].nil?
 params['test_files_dir']    = File.join(params['task_name'], 'files', 'tests') if params['test_files_dir'].nil?
 params['report_format']     = 'documentation' if params['report_format'].nil?
 params['tool_installed']    = false if params['tool_installed'].nil?
-params['return_status']     = false if params['return_status'].nil?
 
 def build_test_file_path(test_files_dir, test_tool, test_file, role)
   # Returns a file path based on the test_tool used and role or test_file specified,
@@ -80,12 +79,8 @@ begin
   $LOAD_PATH.unshift(*Dir.glob(File.expand_path("#{params['test_tool_dir']}/**/lib", __FILE__)))
   # execute testing
   require_relative File.join(params['_installdir'], 'test', 'tasks', "#{params['test_tool']}.rb")
-  result = run(params['test_tool'], abs_test_file, params['report_format'])
-  if params['return_status'] == true
-    exit result
-  else
-    exit 0
-  end
+  status = run(params['test_tool'], abs_test_file, params['report_format'])
+  exit status
 rescue => e
   puts({ status: 'failure', error: e.message }.to_json)
   exit 1
