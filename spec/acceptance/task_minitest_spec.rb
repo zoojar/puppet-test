@@ -5,7 +5,7 @@ describe 'run_task test, test_tool=minitest' do
   config_data = { 'modulepath' => File.join(Dir.pwd, 'spec', 'fixtures', 'modules') }
   inventory_hash = inventory_hash_from_inventory_file
   target_node_name = ENV['TARGET_HOST']
-  bolt_params = {config: config_data, inventory: inventory_hash}
+  bolt_params = { config: config_data, inventory: inventory_hash }
 
   it 'fails to run when no arguments are passed' do
     task_params = { 'test_tool' => 'minitest' }
@@ -24,7 +24,7 @@ describe 'run_task test, test_tool=minitest' do
   end
   it 'returns output (test_tool=minitest, test_file=example_pass.rb)' do
     task_params = { 'test_tool' => 'minitest', 'test_file' => 'example_pass.rb' }
-    task_result = run_task('test::role', target_node_name, task_params , bolt_params)
+    task_result = run_task('test::role', target_node_name, task_params, bolt_params)
     expect(task_result[0]['result']['_output']).to match(%r{2\sruns,\s2\sassertions,\s0\sfailures,\s0\serrors,\s0\sskips})
   end
   it 'does not return the status from the test when params: return_status=false' do
