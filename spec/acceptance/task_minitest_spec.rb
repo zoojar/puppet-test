@@ -2,7 +2,7 @@
 require 'spec_helper_acceptance'
 
 describe 'run_task test, test_tool=minitest' do
-  config_data = { 'modulepath' => File.join(Dir.pwd, 'spec', 'fixtures', 'modules'), :debug }
+  config_data = { 'modulepath' => File.join(Dir.pwd, 'spec', 'fixtures', 'modules') }
   inventory_hash = inventory_hash_from_inventory_file
   target_node_name = ENV['TARGET_HOST']
   bolt_params = { config: config_data, inventory: inventory_hash }
@@ -30,6 +30,7 @@ describe 'run_task test, test_tool=minitest' do
   it 'does not return the status from the test when params: return_status=false' do
     task_params = { 'test_tool' => 'minitest', 'test_file' => 'example_fail.rb', 'return_status' => false }
     task_result = run_task('test::role', target_node_name, task_params, bolt_params)
+    expect(task_result[0]['result']['_output']).to match(%r{\s})
     expect(task_result[0]['status']).to eq('success')
   end
   it 'returns status from test success when params: return_status=true' do
