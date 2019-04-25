@@ -24,7 +24,7 @@ describe 'test::role with serverspec' do
     it 'installs serverspec gem' do
       task_params = { 'test_tool' => 'serverspec', 'test_file' => 'example_pass.rb' }
       run_task('test::role', target_node_name, task_params, bolt_params)
-      cmd_result = run_command('ls /tmp/puppet_test/serverspec/gems/serverspec*/serverspec.gemspec', target_node_name, {}, bolt_params)
+      cmd_result = run_command('ls /tmp/puppet_test/serverspec/gems/serverspec*/serverspec.gemspec', target_node_name, bolt_params)
       expect(cmd_result[0]['status']).to eq('success')
     end
     it 'runs a passing test successfully' do
