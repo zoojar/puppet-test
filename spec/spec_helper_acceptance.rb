@@ -3,6 +3,7 @@
 require 'serverspec'
 require 'puppet_litmus'
 include PuppetLitmus
+include BoltSpec::Run
 
 if ENV['TARGET_HOST'].nil? || ENV['TARGET_HOST'] == 'localhost'
   puts 'Running tests against this machine !'
