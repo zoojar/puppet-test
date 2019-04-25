@@ -1,3 +1,5 @@
+require 'serverspec'
+
 describe service('isnotaservice1') do
   it { should_not be_running }
 end
