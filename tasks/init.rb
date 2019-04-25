@@ -81,8 +81,7 @@ begin
   # execute testing
   require_relative File.join(params['_installdir'], 'test', 'tasks', "#{params['test_tool']}.rb")
   result = run(params['test_tool'], abs_test_file, params['report_format'])
-  if params['return_status']
-    puts params['return_status']
+  if params['return_status'] == true
     exit result
   else
     exit 0
