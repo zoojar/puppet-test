@@ -2,7 +2,7 @@
 require 'spec_helper_acceptance'
 
 describe 'run_task test, test_tool=minitest' do
-  config_data = { 'modulepath' => File.join(Dir.pwd, 'spec', 'fixtures', 'modules') }
+  config_data = { 'modulepath' => File.join(Dir.pwd, 'spec', 'fixtures', 'modules'), debug => true }
   inventory_hash = inventory_hash_from_inventory_file
   target_node_name = ENV['TARGET_HOST']
   bolt_params = { config: config_data, inventory: inventory_hash }
