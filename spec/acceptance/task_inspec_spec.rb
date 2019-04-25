@@ -17,7 +17,7 @@ describe 'test::role with inspec' do
 
     it 'installs inspec gem' do
       task_run('test::role', 'test_tool' => 'inspec', 'test_file' => 'example_pass.rb')
-      cmd_result = run_command('ls /tmp/puppet_test/inspec/gems/inspec*/inspec.gemspec')
+      cmd_result = run_shell('ls /tmp/puppet_test/inspec/gems/inspec*/inspec.gemspec')
       expect(cmd_result[0]['status']).to eq('success')
     end
     it 'runs a passing test successfully' do
