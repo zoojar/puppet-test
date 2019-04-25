@@ -52,3 +52,10 @@ else
     Specinfra.configuration.winrm = winrm
   end
 end
+
+def run_task(task_name, params)
+  config_data = { 'modulepath' => File.join(Dir.pwd, 'spec', 'fixtures', 'modules') }
+  inventory_hash = inventory_hash_from_inventory_file
+  target_node_name = ENV['TARGET_HOST'] if target_node_name.nil?
+  run_task(task_name, target_node_name, params, config: config_data, inventory: inventory_hash)
+end
