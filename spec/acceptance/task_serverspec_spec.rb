@@ -36,6 +36,6 @@ describe 'test_tool=serverspec' do
   it 'fails a failing test' do
     task_params = { 'test_tool' => 'serverspec', 'test_file' => 'example_fail.rb' }
     task_result = task_run('test::role', task_params)
-    expect(task_result[0]).to eq('failure')
+    expect(task_result[0]['status']).to eq('failure')
   end
 end
