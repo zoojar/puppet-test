@@ -30,8 +30,8 @@ describe 'run_task test, test_tool=minitest' do
   it 'does not return the status from the test when params: return_status=false' do
     task_params = { 'test_tool' => 'minitest', 'test_file' => 'example_fail.rb', 'return_status' => false }
     task_result = run_task('test::role', target_node_name, task_params, bolt_params)
-    expect(task_result[0]['result']['_output']).to match(%r{\s})
-    expect(task_result[0]['status']).to eq('success')
+    expect(task_result[0]['result']['_output']).to match(%r{aaa})
+    # expect(task_result[0]['status']).to eq('success')
   end
   it 'returns status from test success when params: return_status=true' do
     task_params = { 'test_tool' => 'minitest', 'test_file' => 'example_pass.rb', 'return_status' => true }
