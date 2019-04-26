@@ -1,4 +1,6 @@
-# This plan should be run from a Puppet server or a linux host with capability for pcp transport to target nodes
+# This plan should be run from a Puppet server or a linux host with:
+# 1. capability for pcp transport to target nodes
+# 2. dev tools (make gcc / build-essential) present for gem staging
 # Example usage:
 #  IMPORTANT: Tests should be stored with roles at site-modules/roles/files/tests (or site-modules/role/files/tests),
 #  for example: 
