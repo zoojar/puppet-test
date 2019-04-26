@@ -13,14 +13,18 @@ describe 'plan test::role with serverspec' do
                                 'ctrl_params' => { 'tmp_dir' => '/tmp' })
     expect(plan_result['value'][0]['result']['error']).to match(%r{unable\sto\sdetect\sthis\snode.*\srole\susing\sfacter})
   end
+  it 'installs (stages) the serverspec gem on the controller' do
+    test_run_plan('test::role',
+                                'test_params' => { 'test_tool' => 'serverspec', 'test_file' => 'example_pass.rb' },
+                                'ctrl_params' => { 'tmp_dir' => '/tmp' })
+    cmd_result = test_run_command('ls /tmp/puppet_test/serverspec/gems/serverspec*/serverspec.gemspec', 'localhost')
+    expect(cmd_result[0]).to eq('success')
+  end
   it 'runs and passes a passing test' do
     plan_result = test_run_plan('test::role',
                                 'test_params' => { 'test_tool' => 'serverspec', 'test_file' => 'example_pass.rb' },
                                 'ctrl_params' => { 'tmp_dir' => '/tmp' })
     expect(plan_result).to eq('success')
-    cmd_result = run_shell('ls /tmp/puppet_test/serverspec/gems/serverspec*/serverspec.gemspec')
-    expect(cmd_result[0]).to eq('success')
-    expect(cmd_result[0]['status']).to eq('success')
   end
 end
 
