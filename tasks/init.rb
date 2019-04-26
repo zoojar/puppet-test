@@ -77,7 +77,7 @@ begin
                                        params['role'])
   # load gems
   lib_dir = "#{params['test_tool_dir']}/**/lib"
-  lib_dir_contents = Dir.[lib_dir]
+  lib_dir_contents = Dir[lib_dir]
   $LOAD_PATH.unshift(*Dir.glob(File.expand_path(lib_dir, __FILE__)))
   # execute testing
   require_relative File.join(params['_installdir'], 'test', 'tasks', "#{params['test_tool']}.rb")
