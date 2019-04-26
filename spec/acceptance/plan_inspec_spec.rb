@@ -8,13 +8,13 @@ describe 'plan test::role with inspec' do
     plan_result = test_run_plan('test::role',
                                 'test_params' => { 'test_tool' => 'inspec' },
                                 'ctrl_params' => { 'tmp_dir' => '/tmp' })
-    expect(plan_result['status']).to eq('failure')
+    expect(plan_result['value'][0]['status']).to eq('failure')
   end
   it 'returns helpful error message if no test_file specified' do
     plan_result = test_run_plan('test::role',
                                 'test_params' => { 'test_tool' => 'inspec' },
                                 'ctrl_params' => { 'tmp_dir' => '/tmp' })
-    expect(plan_result).to match(%r{unable\sto\sdetect\sthis\snode.*\srole\susing\sfacter})
+    expect(plan_result['value'][0]['result']['error']).to match(%r{unable\sto\sdetect\sthis\snode.*\srole\susing\sfacter})
   end
   it 'runs and passes a passing test' do
     plan_result = test_run_plan('test::role',

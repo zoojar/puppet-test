@@ -99,5 +99,4 @@ plan test::role(
 
   # execute tests
   return run_task("test::${_role_dir}", $target, $_test_params)
-
 }

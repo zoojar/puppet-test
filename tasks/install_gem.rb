@@ -44,7 +44,7 @@ begin
       gem_bin = params['gem_bin'] ||= File.join('/', 'opt', 'puppetlabs', 'puppet', 'bin', 'gem')
     when 'Windows'
       os_tmp = 'c:/tmp'
-      gem_bin = params['gem_bin'] ||=  File.join('C:', 'Program Files', 'Puppet Labs', 'Puppet', 'sys', 'ruby', 'bin', 'gem.bat')
+      gem_bin = params['gem_bin'] ||= File.join('C:', 'Program Files', 'Puppet Labs', 'Puppet', 'sys', 'ruby', 'bin', 'gem.bat')
     end
     install_dir = params['install_dir'] ||= File.join(os_tmp, 'puppet_test')
     gem         = params['gem']
