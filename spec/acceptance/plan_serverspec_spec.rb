@@ -1,8 +1,5 @@
 require 'spec_helper_acceptance'
 
-# inspec requires build-essential / dev tools for gem install
-# so the plan is used for inspec - we build locally and copy to node.
-
 describe 'plan test::role with serverspec' do
   it 'fails if no test_file specified' do
     plan_result = test_run_plan('test::role',

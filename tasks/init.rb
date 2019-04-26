@@ -76,13 +76,17 @@ begin
                                        params['test_file'],
                                        params['role'])
   # load gems
-  puts Dir["#{params['test_tool_dir']}/**/lib"]
-  $LOAD_PATH.unshift(*Dir.glob(File.expand_path("#{params['test_tool_dir']}/**/lib", __FILE__)))
+  lib_dir = "#{params['test_tool_dir']}/**/lib"
+  lib_dir_contents = Dir.[lib_dir]
+  $LOAD_PATH.unshift(*Dir.glob(File.expand_path(lib_dir, __FILE__)))
   # execute testing
   require_relative File.join(params['_installdir'], 'test', 'tasks', "#{params['test_tool']}.rb")
   status = run(params['test_tool'], abs_test_file, params['report_format'])
   exit status
 rescue => e
-  puts({ status: 'failure', error: e.message }.to_json)
+  puts({ 
+    status: 'failure',
+    error: "#{e.message} - DEBUG INFO: LOAD_PATH: [#{$LOAD_PATH}], LIB_DIR: [#{lib_dir}], LIB_DIR contents: [#{lib_dir_contents}]" 
+  }.to_json)
   exit 1
 end
