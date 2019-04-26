@@ -4,7 +4,12 @@ require 'spec_helper_acceptance'
 describe 'test_tool=inspec' do
 
   # inspec requires build-essential for gem install
-  run_shell('puppet resource package build-essential ensure=installed')
+  it 'ensures build-essential is installed' do
+    cmd_result = run_shell('puppet resource package build-essential ensure=installed')
+    expect(cmd_result[0]).to eq('success')
+  end
+
+
 
   it 'fails to run' do
     task_result = task_run('test::role', 'test_tool' => 'inspec')
