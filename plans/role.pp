@@ -58,7 +58,7 @@ plan test::role(
     undef   => run_task('test::get_fact', $target, fact => 'rubyplatform').first.value[_output],
     default => $test_params[platform]
   }
-  notice "Target gem platform detected: ${target_platform}"
+
   $test_params_defaults = {
     tool_installed        => true,
     test_tool_install_dir => "${target_tmp_dir}/puppet_test/${test_params[test_tool]}",
