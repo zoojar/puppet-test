@@ -86,7 +86,7 @@ begin
 rescue => e
   puts({ 
     status: 'failure',
-    error: "#{e.message} - DEBUG INFO: LOAD_PATH: [#{$LOAD_PATH}], LIB_DIR: [#{lib_dir}], LIB_DIR contents: [#{lib_dir_contents}]" 
+    error: "#{e.message} - DEBUG INFO: LOAD_PATH: [#{$LOAD_PATH}], LIB_DIR: [#{lib_dir}], LIB_DIR contents: [#{lib_dir_contents}]",
   }.to_json)
   exit 1
 end
