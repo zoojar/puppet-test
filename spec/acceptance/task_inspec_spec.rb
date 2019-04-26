@@ -13,14 +13,9 @@ describe 'test_tool=inspec' do
     expect(task_result[0]['result']['_output']).to match(%r{unable\sto\sdetect\sthis\snode.*\srole\susing\sfacter})
   end
 
-  it 'fails to run if no build tools are present' do
+  it 'fails to run if no build tools are present and returns helpful error message' do
     task_result = test_run_task('test::role', 'test_tool' => 'inspec', 'test_file' => 'example_pass.rb')
     expect(task_result[0]['status']).to eq('failure')
-    expect(task_result[0]).to match(%r{Failed\sto\sbuild\sgem})
-  end
-
-  it 'returns helpful error message if no build tools are present' do
-    task_result = test_run_task('test::role', 'test_tool' => 'inspec', 'test_file' => 'example_pass.rb')
-
+    expect(task_result[0]['result']['error']).to match(%r{Failed\sto\sbuild\sgem})
   end
 end
