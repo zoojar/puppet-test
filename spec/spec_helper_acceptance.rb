@@ -59,3 +59,10 @@ def test_run_task(task_name, params)
   target_node_name = ENV['TARGET_HOST'] if target_node_name.nil?
   run_task(task_name, target_node_name, params, config: config_data, inventory: inventory_hash)
 end
+
+def test_run_plan(plan_name, params)
+  config_data = { 'modulepath' => File.join(Dir.pwd, 'spec', 'fixtures', 'modules') }
+  inventory_hash = inventory_hash_from_inventory_file
+  target_node_name = ENV['TARGET_HOST'] if target_node_name.nil?
+  run_plan(plan_name, params.merge!('target' => target_node_name), config: config_data, inventory: inventory_hash)
+end
