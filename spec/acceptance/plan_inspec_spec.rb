@@ -20,6 +20,6 @@ describe 'plan test::role with inspec' do
     plan_result = test_run_plan('test::role',
                                 'test_params' => { 'test_tool' => 'inspec', 'test_file' => 'example_pass.rb' },
                                 'ctrl_params' => { 'tmp_dir' => '/tmp' })
-    expect(plan_result['status']).to eq('success')
+    expect(plan_result).to eq('success')
   end
 end
