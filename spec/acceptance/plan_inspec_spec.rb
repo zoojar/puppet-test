@@ -4,7 +4,7 @@ require 'spec_helper_acceptance'
 # so the plan is used for inspec - we build locally and copy to node.
 
 describe 'plan test::role with inspec' do
-  it 'fails is no test_file specified' do
+  it 'fails if no test_file specified' do
     plan_result = test_run_plan('test::role',
                            'test_params' => { 'test_tool' => 'inspec' },
                            'ctrl_params' => { 'tmp_dir' => '/tmp' })
@@ -14,7 +14,7 @@ describe 'plan test::role with inspec' do
     plan_result = test_run_plan('test::role',
                            'test_params' => { 'test_tool' => 'inspec' },
                            'ctrl_params' => { 'tmp_dir' => '/tmp' })
-    expect(plan_result['result']['_output']).to match(%r{unable\sto\sdetect\sthis\snode.*\srole\susing\sfacter})
+    expect(plan_result['result']).to match(%r{unable\sto\sdetect\sthis\snode.*\srole\susing\sfacter})
   end
   it 'runs and passes a passing test' do
     plan_result = test_run_plan('test::role',
