@@ -24,4 +24,3 @@ describe 'test_tool=inspec' do
     expect(task_result[0]['result']['_output']).to match(%r{unable\sto\sdetect\sthis\snode.*\srole\susing\sfacter})
   end
 end
-
