@@ -53,7 +53,7 @@ else
   end
 end
 
-def task_run(task_name, params)
+def test_run_task(task_name, params)
   config_data = { 'modulepath' => File.join(Dir.pwd, 'spec', 'fixtures', 'modules') }
   inventory_hash = inventory_hash_from_inventory_file
   target_node_name = ENV['TARGET_HOST'] if target_node_name.nil?
