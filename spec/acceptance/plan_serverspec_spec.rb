@@ -17,7 +17,7 @@ describe 'plan test::role with serverspec' do
     test_run_plan('test::role',
                   'test_params' => { 'test_tool' => 'serverspec', 'test_file' => 'example_pass.rb' },
                   'ctrl_params' => { 'tmp_dir' => '/tmp' })
-    cmd_result = test_run_command('ls /tmp/puppet_test', 'localhost')
+    cmd_result = test_run_command('ls /tmp/puppet_test/serverspec/', 'localhost')
     expect(cmd_result[0]).to eq('success')
   end
   it 'runs and passes a passing test' do
