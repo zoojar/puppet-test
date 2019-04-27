@@ -82,7 +82,7 @@ plan test::role(
   # Stage the gems to tmp dir on the controller
   $_ctrl_gem_dir = "${_ctrl_params[tmp_dir]}/puppet_test/${$_test_tool}"
   unless $_ctrl_params[install_gem] == false {
-    run_task('test::install_gem', $controller, { gem => $_test_tool, install_dir => $_ctrl_gem_dir, platform => $target_platform }, '_catch_errors' => true)
+    run_task('test::install_gem', $controller, gem => $_test_tool, install_dir => $_ctrl_gem_dir, platform => $target_platform, '_catch_errors' => true)
   }
   if $target_kernel == 'Linux' and $_ctrl_params[compress_tool] {
     # Compress if target is linux, native file compression in windows...bleghhh
