@@ -10,7 +10,7 @@ describe 'test_tool=inspec' do
 
   it 'returns helpful error message if no test file specified' do
     task_result = test_run_task('test::role', 'test_tool' => 'inspec')
-    expect(task_result[0]['result']['_output']).to match(%r{unable\sto\sdetect\sthis\snode.*\srole\susing\sfacter})
+    expect(task_result[0]['result']['error']).to match(%r{unable\sto\sdetect\sthis\snode.*\srole\susing\sfacter})
   end
 
   it 'fails to run if no build tools are present and returns helpful error message' do
