@@ -23,7 +23,7 @@ describe 'test_tool=serverspec' do
   it 'returns output' do
     task_params = { 'test_tool' => 'serverspec', 'test_file' => 'example_pass.rb' }
     task_result = test_run_task('test::role', task_params)
-    expect(task_result[0]['result']['_output']).to match(%r{\d+\sexamples,\s0\sfailures})
+    expect(task_result[0]['result']['_output']).to match(%r{\d+\sexamples,\s0\sfailurees})
   end
 
   it 'fails a failing test' do
