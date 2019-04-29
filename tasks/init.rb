@@ -16,25 +16,19 @@ require 'open3'
 require 'puppet'
 require 'facter'
 
-case Facter.value(:kernel)
-when 'Darwin'
-  os_tmp  = '/Users/Shared/tmp'
-  gem_bin = File.join('/opt', 'puppetlabs', 'puppet', 'bin', 'gem')
-when 'Linux'
-  os_tmp  = '/tmp'
-  gem_bin = File.join('/opt', 'puppetlabs', 'puppet', 'bin', 'gem')
-when 'Windows'
-  os_tmp  = 'c:/tmp'
-  gem_bin = File.join('c:', 'programdata', 'puppetlabs', 'puppet', 'bin', 'gem')
-end
-
-params = JSON.parse(STDIN.read)
+params                      = JSON.parse(STDIN.read)
+gem_bin                     = case Facter.value(:kernel)
+                              when /Linux|Dawin/
+                                File.join('/', 'opt', 'puppetlabs', 'puppet', 'bin', 'gem')
+                              when 'Windows'
+                                File.join('c:', 'programdata', 'puppetlabs', 'puppet', 'bin', 'gem')
+                              end
 params['task_name']         = params['_task'].to_s.split('::').last if params['task_name'].nil?
 params['gem_bin']           = gem_bin if params['gem_bin'].nil?
 params['test_tool']         = 'serverspec' if params['test_tool'].nil?
 params['test_tool_version'] = '> 0' if params['test_tool_version'].nil?
 params['platform']          = '' if params['platform'].nil?
-params['test_tool_dir']     = File.join(os_tmp, 'puppet_test', params['test_tool']) if params['test_tool_dir'].nil?
+params['test_tool_dir']     = File.join(params['_installdir'], 'puppet_test', params['test_tool']) if params['test_tool_dir'].nil?
 params['test_file']         = '' if params['test_file'].nil?
 params['role']              = '' if params['role'].nil?
 params['test_files_dir']    = File.join(params['task_name'], 'files', 'tests') if params['test_files_dir'].nil?
@@ -64,11 +58,42 @@ def build_test_file_path(test_files_dir, test_tool, test_file, role)
   abs_test_file
 end
 
+def install_gem(gem_bin, gem, version, install_dir, platform)
+  require 'shellwords'
+  require 'open3'
+  require 'fileutils'
+  # If HOME is not already set, set it.
+  if ENV['HOME'].nil?
+    require 'etc'
+    ENV['HOME'] = Etc.getpwuid.dir
+  end
+
+  cmd = [
+    gem_bin, 'install', gem,
+    '-i', install_dir,
+    '--no-ri', '--no-rdoc'
+  ]
+  cmd << '-v' << version unless version.empty?
+  cmd << '--platform' << platform unless platform.empty?
+  cmd = cmd.shelljoin
+  begin
+    FileUtils.mkdir_p install_dir unless File.directory?(install_dir)
+    stdout, stderr, exitcode = Open3.capture3(cmd)
+    raise "Failed to install gem #{gem} using cmd: #{cmd} : #{stderr}" unless exitcode.to_i.zero? && stderr.to_s.empty?
+    puts "gem #{gem} installed at #{install_dir}: #{stdout} #{stderr}"
+  rescue => e
+    puts({ status: 'failure', error: e.message }.to_json)
+  end
+end
+
 begin
   unless params['tool_installed']
     # install gems for test tooling
-    require_relative File.join(params['_installdir'], 'test', 'tasks', 'install_gem.rb')
-    install_gem(params['gem_bin'], params['test_tool'], params['test_tool_version'], params['test_tool_dir'], params['platform'])
+    install_gem(params['gem_bin'],
+                params['test_tool'],
+                params['test_tool_version'],
+                params['test_tool_dir'],
+                params['platform'])
   end
   # determine absolute path of test file to be executed
   abs_test_file = build_test_file_path(File.join(params['_installdir'], params['test_files_dir']),
@@ -77,7 +102,6 @@ begin
                                        params['role'])
   # load gems
   lib_dir = "#{params['test_tool_dir']}/**/lib"
-  lib_dir_contents = Dir[lib_dir]
   $LOAD_PATH.unshift(*Dir.glob(File.expand_path(lib_dir, __FILE__)))
   # execute testing
   require_relative File.join(params['_installdir'], 'test', 'tasks', "#{params['test_tool']}.rb")
