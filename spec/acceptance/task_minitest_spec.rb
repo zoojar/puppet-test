@@ -10,7 +10,7 @@ describe 'test_tool=minitest' do
   it 'returns helpful error message when no arguments are passed' do
     task_params = { 'test_tool' => 'minitest' }
     task_result = test_run_task('test::role', task_params)
-    expect(task_result[0]['result']['_output']).to match(%r{unable\sto\sdetect\sthis\snode.*\srole\susing\sfacter})
+    expect(task_result[0]).to match(%r{unable\sto\sdetect\sthis\snode.*\srole\susing\sfacter})
   end
 
   it 'runs a passing test successfully (test_tool=minitest, test_file=example_pass.rb)' do
