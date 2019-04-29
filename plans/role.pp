@@ -61,7 +61,7 @@ plan test::role(
     'Windows':{ $target_tmp_dir = 'c:/temp' ; $ruby_bin  = 'c:/programdata/puppetlabs/puppet/bin/ruby' }
     default: { raise('unsupported os') }
   }
-  
+
   $target_platform = $test_params[platform] ? {
     undef   => run_task('test::get_fact', $target, fact => 'rubyplatform').first.value[_output],
     default => $test_params[platform]
