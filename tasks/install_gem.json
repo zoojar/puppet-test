@@ -1,7 +1,7 @@
 {
   "puppet_task_version": 1,
   "supports_noop": false,
-  "description": "Installs gems in install_dir, returns path install_dir as stdout",
+  "description": "Installs gems in install_dir, used by the plan to stage the gem locally on the controller",
   "private": true,
   "parameters": {
     "gem_bin": {

@@ -110,7 +110,7 @@ begin
 rescue => e
   puts({
     status: 'failure',
-    error: "#{e.message}",
+    error: e.message,
   }.to_json)
   exit 1
 end
