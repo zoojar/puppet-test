@@ -18,10 +18,10 @@ require 'facter'
 
 params                      = JSON.parse(STDIN.read)
 gem_bin                     = case Facter.value(:kernel)
-                              when %r{/Linux|Dawin/}
-                                File.join('/', 'opt', 'puppetlabs', 'puppet', 'bin', 'gem')
                               when 'Windows'
                                 File.join('c:', 'programdata', 'puppetlabs', 'puppet', 'bin', 'gem')
+                              else
+                                File.join('/', 'opt', 'puppetlabs', 'puppet', 'bin', 'gem')
                               end
 params['task_name']         = params['_task'].to_s.split('::').last if params['task_name'].nil?
 params['gem_bin']           = gem_bin if params['gem_bin'].nil?
