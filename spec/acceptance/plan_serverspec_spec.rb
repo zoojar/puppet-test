@@ -1,6 +1,7 @@
 require 'spec_helper_acceptance'
 
 describe 'plan test::role with serverspec' do
+  test_run_command('mkdir -p /tmp/puppet_test/serverspec ; gem install serverspec -i /tmp/puppet_test/serverspec --no-ri --no-rdoc', 'localhost')
   it 'fails if no test_file specified' do
     plan_result = test_run_plan('test::role',
                                 'test_params' => { 'test_tool' => 'serverspec' },
