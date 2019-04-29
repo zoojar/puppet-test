@@ -27,6 +27,8 @@ When run against targeted nodes:
 1. (Optionally) Installs the specified test tooling (gems) in *gem_dir* (default: /<tmp>/puppet_test/gems) on the target node.
 2. Executes a specified test with the specified test tooling (minitest/inspec/serverspec) on the target node.
 
+Uses the same method as the puppet resource "puppet_gem" to install gems using Puppet's gem binary (installed as part of puppet agent).
+
 
 ### Setup Requirements
 

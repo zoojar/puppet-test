@@ -6,6 +6,7 @@ fixtures:
     facts: 'https://github.com/puppetlabs/puppetlabs-facts.git'
     puppet_agent: 'https://github.com/puppetlabs/puppetlabs-puppet_agent.git'
     provision: 'https://github.com/puppetlabs/provision.git'
+    service: https://github.com/puppetlabs/service.git
   symlinks:
     test: "#{source_dir}"
     role: "#{source_dir}/spec/fixtures/site-modules/role/"
