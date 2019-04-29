@@ -104,7 +104,7 @@ begin
   lib_dir = "#{params['test_tool_dir']}/**/lib"
   $LOAD_PATH.unshift(*Dir.glob(File.expand_path(lib_dir, __FILE__)))
   # execute testing
-  require_relative File.join(params['_installdir'], 'test', 'tasks', "test_helper.rb")
+  require_relative File.join(params['_installdir'], 'test', 'tasks', "#{params['test_tool']}.rb")
   status = run(params['test_tool'], abs_test_file, params['report_format'])
   exit status
 rescue => e
