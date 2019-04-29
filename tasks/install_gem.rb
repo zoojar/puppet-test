@@ -14,11 +14,11 @@ def install_gem(gem, version, install_dir, platform, gem_bin = nil)
   end
   if gem_bin.nil?
     gem_bin = case Facter.value(:kernel)
-    when 'Windows'
-      File.join('c:', 'programdata', 'puppetlabs', 'puppet', 'bin', 'gem')
-    else
-      File.join('/', 'opt', 'puppetlabs', 'puppet', 'bin', 'gem')
-    end
+              when 'Windows'
+                File.join('c:', 'programdata', 'puppetlabs', 'puppet', 'bin', 'gem')
+              else
+                File.join('/', 'opt', 'puppetlabs', 'puppet', 'bin', 'gem')
+              end
   end
   cmd = [
     gem_bin, 'install', gem,
