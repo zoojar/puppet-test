@@ -87,6 +87,11 @@ def install_gem(gem_bin, gem, version, install_dir, platform)
 end
 
 begin
+  # determine absolute path of test file to be executed
+  abs_test_file = build_test_file_path(File.join(params['_installdir'], params['test_files_dir']),
+                                       params['test_tool'],
+                                       params['test_file'],
+                                       params['role'])
   unless params['tool_installed']
     # install gems for test tooling
     install_gem(params['gem_bin'],
@@ -94,12 +99,7 @@ begin
                 params['test_tool_version'],
                 params['test_tool_dir'],
                 params['platform'])
-  end
-  # determine absolute path of test file to be executed
-  abs_test_file = build_test_file_path(File.join(params['_installdir'], params['test_files_dir']),
-                                       params['test_tool'],
-                                       params['test_file'],
-                                       params['role'])
+  end                           
   # load gems
   lib_dir = "#{params['test_tool_dir']}/**/lib"
   $LOAD_PATH.unshift(*Dir.glob(File.expand_path(lib_dir, __FILE__)))

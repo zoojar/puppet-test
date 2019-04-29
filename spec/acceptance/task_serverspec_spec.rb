@@ -14,13 +14,6 @@ describe 'test_tool=serverspec' do
     expect(task_result[0]['result']['_output']).to match(%r{unable\sto\sdetect\sthis\snode.*\srole\susing\sfacter})
   end
 
-  it 'installs serverspec gem' do
-    task_params = { 'test_tool' => 'serverspec', 'test_file' => 'example_pass.rb' }
-    test_run_task('test::role', task_params)
-    cmd_result = run_shell('ls /tmp/puppet_test/serverspec/gems/serverspec*/serverspec.gemspec')
-    expect(cmd_result[0]['status']).to eq('success')
-  end
-
   it 'runs a passing test successfully' do
     task_params = { 'test_tool' => 'serverspec', 'test_file' => 'example_pass.rb' }
     task_result = test_run_task('test::role', task_params)
