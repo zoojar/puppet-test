@@ -20,8 +20,13 @@ plan test::role(
   TargetSpec           $target,
   Optional[TargetSpec] $controller    = get_targets('localhost')[0],
   Optional[Hash]       $ctrl_params   = {},
-  Optional[Hash]       $test_params   = {},
+  Optional[Hash]       $test_params   = {}
 ) {
+
+  # check that we have core modules available for bolt gem
+  ['service', 'facts', 'puppet_agent'].each |$mod| {
+    unless module_directory($mod) { fail_plan("Core module missing [${mod}]") }
+  }
 
   # find the tests, where are the tests? role or roles?
   if    module_directory('role' ) { $_role_dir = 'role'  }
@@ -56,6 +61,7 @@ plan test::role(
     'Windows':{ $target_tmp_dir = 'c:/temp' ; $ruby_bin  = 'c:/programdata/puppetlabs/puppet/bin/ruby' }
     default: { raise('unsupported os') }
   }
+  
   $target_platform = $test_params[platform] ? {
     undef   => run_task('test::get_fact', $target, fact => 'rubyplatform').first.value[_output],
     default => $test_params[platform]
@@ -68,9 +74,12 @@ plan test::role(
   }
 
   $ctrl_params_defaults = {
-    target        => 'localhost',
-    tmp_dir       => '/tmp',
-    compress_tool => false,
+    target              => 'localhost',
+    tmp_dir             => '/tmp',
+    compress_tool       => false,
+    install_gem         => true,
+    gem_version         => latest,
+    gem_install_options => [ '--no-ri', '--no-rdoc' ]
   }
 
   # merge defaults with params
@@ -82,8 +91,16 @@ plan test::role(
   # Stage the gems to tmp dir on the controller
   $_ctrl_gem_dir = "${_ctrl_params[tmp_dir]}/puppet_test/${$_test_tool}"
   unless $_ctrl_params[install_gem] == false {
-    run_task('test::install_gem', $controller, gem => $_test_tool, install_dir => $_ctrl_gem_dir, platform => $target_platform, '_catch_errors' => true)
+    apply($controller, _catch_errors => true) {
+      file { $_ctrl_gem_dir: ensure => directory }
+      package { $_test_tool:
+        ensure          => $_ctrl_params[gem_version],
+        provider        => puppet_gem,
+        install_options => $_ctrl_params[gem_install_options] << { '--install_dir' => $_ctrl_gem_dir },
+      }
+    }
   }
+
   if $target_kernel == 'Linux' and $_ctrl_params[compress_tool] {
     # Compress if target is linux, native file compression in windows...bleghhh
     run_command("tar -zcf ${_ctrl_gem_dir}/${_test_tool}.tar.gz ${_ctrl_gem_dir}",

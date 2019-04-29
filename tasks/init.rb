@@ -7,7 +7,7 @@
 #   bolt task run test::roles -n webserver-01.local --modulepath . \
 #     --params '{ "test_tool": "inspec" , "test_file": "web_server.rb" }'
 #   It does the following things:
-#     1. Installs the inspec gems on webserver-01.local in test_tool_dir (default: /tmp/puppet_test/gems)
+#     1. Installs the inspec gems on webserver-01.local in test_tool_install_dir (default: /tmp/puppet_test/gems)
 #     2. Copies the files from <control-repo>/site-modules/roles/files/tests/inspec/web_server.rb
 #     3. Executes inspec runner with the web_server.rb spec and returns the report as stdout
 
@@ -16,24 +16,24 @@ require 'open3'
 require 'puppet'
 require 'facter'
 
-params                      = JSON.parse(STDIN.read)
-gem_bin                     = case Facter.value(:kernel)
-                              when 'Windows'
-                                File.join('c:', 'programdata', 'puppetlabs', 'puppet', 'bin', 'gem')
-                              else
-                                File.join('/', 'opt', 'puppetlabs', 'puppet', 'bin', 'gem')
-                              end
-params['task_name']         = params['_task'].to_s.split('::').last if params['task_name'].nil?
-params['gem_bin']           = gem_bin if params['gem_bin'].nil?
-params['test_tool']         = 'serverspec' if params['test_tool'].nil?
-params['test_tool_version'] = '> 0' if params['test_tool_version'].nil?
-params['platform']          = '' if params['platform'].nil?
-params['test_tool_dir']     = File.join(params['_installdir'], 'puppet_test', params['test_tool']) if params['test_tool_dir'].nil?
-params['test_file']         = '' if params['test_file'].nil?
-params['role']              = '' if params['role'].nil?
-params['test_files_dir']    = File.join(params['task_name'], 'files', 'tests') if params['test_files_dir'].nil?
-params['report_format']     = 'documentation' if params['report_format'].nil?
-params['tool_installed']    = false if params['tool_installed'].nil?
+params                          = JSON.parse(STDIN.read)
+gem_bin                         = case Facter.value(:kernel)
+                                  when 'Windows'
+                                    File.join('c:', 'programdata', 'puppetlabs', 'puppet', 'bin', 'gem')
+                                  else
+                                    File.join('/', 'opt', 'puppetlabs', 'puppet', 'bin', 'gem')
+                                  end
+params['task_name']             = params['_task'].to_s.split('::').last if params['task_name'].nil?
+params['gem_bin']               = gem_bin if params['gem_bin'].nil?
+params['test_tool']             = 'serverspec' if params['test_tool'].nil?
+params['test_tool_version']     = '> 0' if params['test_tool_version'].nil?
+params['platform']              = '' if params['platform'].nil?
+params['test_tool_install_dir'] = File.join(params['_installdir'], 'puppet_test', params['test_tool']) if params['test_tool_install_dir'].nil?
+params['test_file']             = '' if params['test_file'].nil?
+params['role']                  = '' if params['role'].nil?
+params['test_files_dir']        = File.join(params['task_name'], 'files', 'tests') if params['test_files_dir'].nil?
+params['report_format']         = 'documentation' if params['report_format'].nil?
+params['tool_installed']        = false if params['tool_installed'].nil?
 
 def build_test_file_path(test_files_dir, test_tool, test_file, role)
   # Returns a file path based on the test_tool used and role or test_file specified,
@@ -97,11 +97,11 @@ begin
     install_gem(params['gem_bin'],
                 params['test_tool'],
                 params['test_tool_version'],
-                params['test_tool_dir'],
+                params['test_tool_install_dir'],
                 params['platform'])
   end
   # load gems
-  lib_dir = "#{params['test_tool_dir']}/**/lib"
+  lib_dir = "#{params['test_tool_install_dir']}/**/lib"
   $LOAD_PATH.unshift(*Dir.glob(File.expand_path(lib_dir, __FILE__)))
   # execute testing
   require_relative File.join(params['_installdir'], 'test', 'tasks', "#{params['test_tool']}.rb")
