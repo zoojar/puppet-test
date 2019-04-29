@@ -18,7 +18,7 @@ require 'facter'
 
 params                      = JSON.parse(STDIN.read)
 gem_bin                     = case Facter.value(:kernel)
-                              when /Linux|Dawin/
+                              when %r{/Linux|Dawin/}
                                 File.join('/', 'opt', 'puppetlabs', 'puppet', 'bin', 'gem')
                               when 'Windows'
                                 File.join('c:', 'programdata', 'puppetlabs', 'puppet', 'bin', 'gem')
@@ -108,7 +108,7 @@ begin
   status = run(params['test_tool'], abs_test_file, params['report_format'])
   exit status
 rescue => e
-  puts({ 
+  puts({
     status: 'failure',
     error: "#{e.message} - DEBUG INFO: LOAD_PATH: [#{$LOAD_PATH}], LIB_DIR: [#{lib_dir}], LIB_DIR contents: [#{lib_dir_contents}]",
   }.to_json)

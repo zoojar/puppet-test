@@ -27,5 +27,3 @@ describe 'plan test::role with serverspec' do
     expect(plan_result).to eq('success')
   end
 end
-
-
