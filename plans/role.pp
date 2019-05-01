@@ -122,9 +122,9 @@ plan test::role(
     return $result.first.message
   } else {
     if $result.first.message {
-      fail_plan("${result.first.message}")
+      fail_plan("Error: ${result.first.message}")
     } else {
-      fail_plan("${result}")
+      fail_plan("Error: ${result}")
     }
   }
 }
