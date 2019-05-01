@@ -117,5 +117,14 @@ plan test::role(
   }
 
   # execute tests
-  return run_task("test::${_role_dir}", $target, $_test_params)
+  $result = run_task("test::${_role_dir}", $target, $_test_params)
+  if $result.ok {
+    return $result.first.message
+  } else {
+    if $result.first.message {
+      fail_plan("${result.first.message}")
+    } else {
+      fail_plan("${result}")
+    }
+  }
 }
