@@ -52,7 +52,7 @@ plan test::role(
   ## because bolt tasks delete their tmp dirs after executing.
   ### If unspecififed, detect target's tmp dir based on kernel
   $target_kernel = $test_params[kernel] ? {
-    undef   => run_task('test::get_fact', $target, fact => 'kernel').first.value[_output],
+    undef   => run_task('test::get_fact', $target, "Detecting OS kernel using facter via task: test::get_fact", fact => 'kernel').first.value[_output],
     default => $test_params[kernel]
   }
 
@@ -60,11 +60,6 @@ plan test::role(
     /Linux|Darwin/: { $target_tmp_dir = '/tmp' ; $ruby_bin  = '/opt/puppetlabs/bin/puppet/ruby' }
     'Windows':{ $target_tmp_dir = 'c:/temp' ; $ruby_bin  = 'c:/programdata/puppetlabs/puppet/bin/ruby' }
     default: { raise('unsupported os') }
-  }
-
-  $target_platform = $test_params[platform] ? {
-    undef   => run_task('test::get_fact', $target, fact => 'rubyplatform').first.value[_output],
-    default => $test_params[platform]
   }
 
   $test_params_defaults = {
@@ -113,18 +108,20 @@ plan test::role(
         $target, '_catch_errors' => true, '_run_as' => 'root')
   } else {
     # upload tool
-    upload_file($_ctrl_gem_dir, $_target_gem_dir, $target, '_catch_errors' => true, '_run_as' => 'root')
+    upload_file($_ctrl_gem_dir,
+                $_target_gem_dir,
+                $target,
+                "Uploading gems from '${_ctrl_gem_dir}' to target '${target}' in tmpdir '${target_tmp_dir}'",
+                '_catch_errors' => true,
+                '_run_as' => 'root')
   }
 
   # execute tests
-  $result = run_task("test::${_role_dir}", $target, $_test_params)
+  $result = run_task("test::${_role_dir}", $target, "Executing tests with the following params: ${_test_params}", $_test_params)
+
   if $result.ok {
-    return $result.first.message
+    return $result
   } else {
-    if $result.first.message {
-      fail_plan("Error: ${result.first.message}")
-    } else {
-      fail_plan("Error: ${result}")
-    }
+    fail_plan('Plan failed', 'error', $result.first.value)
   }
 }

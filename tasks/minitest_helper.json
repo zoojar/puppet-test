@@ -1,6 +1,6 @@
 {
   "puppet_task_version": 1,
   "supports_noop": false,
-  "description": "wrapper for serverspec",
+  "description": "helper for minitest",
   "private": true
 }

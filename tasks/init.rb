@@ -15,6 +15,7 @@ require 'json'
 require 'open3'
 require 'puppet'
 require 'facter'
+require 'stringio'
 
 params                          = JSON.parse(STDIN.read)
 gem_bin                         = case Facter.value(:kernel)
@@ -27,13 +28,13 @@ params['task_name']             = params['_task'].to_s.split('::').last if param
 params['gem_bin']               = gem_bin if params['gem_bin'].nil?
 params['test_tool']             = 'serverspec' if params['test_tool'].nil?
 params['test_tool_version']     = '> 0' if params['test_tool_version'].nil?
-params['platform']              = '' if params['platform'].nil?
 params['test_tool_install_dir'] = File.join(params['_installdir'], 'puppet_test', params['test_tool']) if params['test_tool_install_dir'].nil?
 params['test_file']             = '' if params['test_file'].nil?
 params['role']                  = '' if params['role'].nil?
 params['test_files_dir']        = File.join(params['task_name'], 'files', 'tests') if params['test_files_dir'].nil?
 params['report_format']         = 'documentation' if params['report_format'].nil?
 params['tool_installed']        = false if params['tool_installed'].nil?
+params['suppress_exit_code']    = false if params['suppress_exit_code'].nil?
 
 def build_test_file_path(test_files_dir, test_tool, test_file, role)
   # Returns a file path based on the test_tool used and role or test_file specified,
@@ -58,7 +59,7 @@ def build_test_file_path(test_files_dir, test_tool, test_file, role)
   abs_test_file
 end
 
-def install_gem(gem_bin, gem, version, install_dir, platform)
+def install_gem(gem_bin, gem, version, install_dir)
   require 'shellwords'
   require 'open3'
   require 'fileutils'
@@ -74,43 +75,50 @@ def install_gem(gem_bin, gem, version, install_dir, platform)
     '--no-ri', '--no-rdoc'
   ]
   cmd << '-v' << version unless version.empty?
-  cmd << '--platform' << platform unless platform.empty?
   cmd = cmd.shelljoin
-  begin
-    FileUtils.mkdir_p install_dir unless File.directory?(install_dir)
-    stdout, stderr, exitcode = Open3.capture3(cmd)
-    raise "Failed to install gem #{gem} using cmd: #{cmd} : #{stderr}" unless exitcode.to_i.zero? && stderr.to_s.empty?
-    puts "gem #{gem} installed at #{install_dir}: #{stdout} #{stderr}"
-  rescue => e
-    puts({ status: 'failure', error: e.message }.to_json)
-  end
+  FileUtils.mkdir_p install_dir unless File.directory?(install_dir)
+  stdout, stderr, exitcode = Open3.capture3(cmd)
+  raise "Gem install failed: #{stdout} #{stderr}" unless exitcode.success?
 end
 
 begin
+  $task_exit_code = 1
+
   # determine absolute path of test file to be executed
   abs_test_file = build_test_file_path(File.join(params['_installdir'], params['test_files_dir']),
                                        params['test_tool'],
                                        params['test_file'],
                                        params['role'])
+
+  # install gems for test tooling
   unless params['tool_installed']
-    # install gems for test tooling
     install_gem(params['gem_bin'],
                 params['test_tool'],
                 params['test_tool_version'],
-                params['test_tool_install_dir'],
-                params['platform'])
+                params['test_tool_install_dir'])
   end
-  # load gems
+
+  # load gems into path
   lib_dir = "#{params['test_tool_install_dir']}/**/lib"
   $LOAD_PATH.unshift(*Dir.glob(File.expand_path(lib_dir, __FILE__)))
-  # execute testing
-  require_relative File.join(params['_installdir'], 'test', 'tasks', "#{params['test_tool']}.rb")
-  status = run(params['test_tool'], abs_test_file, params['report_format'])
-  exit status
+
+  # require helper for specific test tool
+  require_relative File.join(params['_installdir'], 'test', 'tasks', "#{params['test_tool']}_helper.rb")
+
+  # execute test
+  test_exit_code = run_test(params['test_tool'], abs_test_file, params['report_format'])
+
+  # by default we fail the task if the test fails, unless we suppress the exit code returned by the test
+  if params['suppress_exit_code']
+    puts 'WARN: Unable to suppress exit codes when running minitest - it plays with them at_exit' if params['test_tool'] == 'minitest'
+    $task_exit_code = 0
+  else
+    $task_exit_code = test_exit_code
+  end
+
 rescue => e
-  puts({
-    status: 'failure',
-    error: e.message,
-  }.to_json)
-  exit 1
+  puts({ status: 'failure', error: e, backtrace: e.backtrace }.to_json)
+  $task_exit_code = 1
+ensure
+  exit $task_exit_code
 end
