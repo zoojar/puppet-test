@@ -52,7 +52,7 @@ plan test::role(
   ## because bolt tasks delete their tmp dirs after executing.
   ### If unspecififed, detect target's tmp dir based on kernel
   $target_kernel = $test_params[kernel] ? {
-    undef   => run_task('test::get_fact', $target, "Detecting OS kernel using facter via task: test::get_fact", fact => 'kernel').first.value[_output],
+    undef   => run_task('test::get_fact', $target, 'Detecting OS kernel using facter via task: test::get_fact', fact => 'kernel').first.value[_output],
     default => $test_params[kernel]
   }
 
@@ -84,6 +84,7 @@ plan test::role(
   $_target_gem_dir = $_test_params[test_tool_install_dir]
 
   # Stage the gems to tmp dir on the controller
+  # TODO: FIX THIS BROKEN GEM STAGING - WE NEED A CLEAN TMP OR A WAY TO RESOLVE CACHED GEMS AND PULL THE RIGHT ONES IN
   $_ctrl_gem_dir = "${_ctrl_params[tmp_dir]}/puppet_test/${$_test_tool}"
   unless $_ctrl_params[install_gem] == false {
     apply($controller, _catch_errors => true) {
