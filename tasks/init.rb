@@ -119,12 +119,8 @@ begin
   test_exit_code = run_test(params['test_tool'], abs_test_file, params['report_format'])
 
   # by default we fail the task if the test fails, unless we suppress the exit code returned by the test
-  if params['suppress_exit_code']
-    puts 'WARN: Unable to suppress exit codes when running minitest - it plays with them at_exit' if params['test_tool'] == 'minitest'
-    task_exit_code = 0
-  else
-    task_exit_code = test_exit_code
-  end
+  task_exit_code = params['suppress_exit_code'] ? 0 : test_exit_code
+
 rescue => e
   puts({ status: 'failure', error: e, backtrace: e.backtrace }.to_json)
   task_exit_code = 1
