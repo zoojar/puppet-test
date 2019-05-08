@@ -50,7 +50,7 @@ def build_test_file_path(test_files_dir, test_file, role, opt_dir)
   unless File.file?(abs_test_file)
     raise ["test_file does not exist at: #{abs_test_file}!",
            'Make sure test files exist in your control repo,',
-           '(at site-modules/role/files/spec/)'].join(' ')
+           '(at site-modules/role/files/tests/)'].join(' ')
   end
   abs_test_file
 end
@@ -64,7 +64,6 @@ def install_gem(gem_bin, gem, version, install_dir)
     require 'etc'
     ENV['HOME'] = Etc.getpwuid.dir
   end
-
   cmd = [
     gem_bin, 'install', gem,
     '-i', install_dir,
@@ -101,8 +100,7 @@ begin
   end
 
   # load gems into path
-  lib_dir = "#{params['test_tool_install_dir']}/**/lib"
-  $LOAD_PATH.unshift(*Dir.glob(File.expand_path(lib_dir, __FILE__)))
+  $LOAD_PATH.unshift(*Dir.glob(File.expand_path("#{params['test_tool_install_dir']}/**/lib", __FILE__)))
 
   # execute test
   test_exit_code = run_test(params['test_tool'], abs_test_file, params['report_format'])
