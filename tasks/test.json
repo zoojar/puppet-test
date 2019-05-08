@@ -34,6 +34,10 @@
     "suppress_exit_code": {
       "type": "Optional[Boolean]",
       "description": "Always return exit code of '0' regardless of whether the test failed or not. Default is: false (the task will return the exit code from the test and will fail if the test fails)."
+    },
+    "opt_dir": {
+      "type": "Optional[String]",
+      "description": "Puppet opt dir."
     }
   },
   "files": ["role/files/tests/"],
