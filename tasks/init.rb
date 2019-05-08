@@ -36,6 +36,7 @@ params['report_format']         = 'documentation' if params['report_format'].nil
 params['tool_installed']        = false if params['tool_installed'].nil?
 params['suppress_exit_code']    = false if params['suppress_exit_code'].nil?
 
+puts "Running #{params['_modulename']}"
 
 def build_test_file_path(test_files_dir, test_file, role)
   # Returns a file path based on the role or test_file specified,
@@ -118,7 +119,6 @@ begin
     task_exit_code = test_exit_code
   end
 rescue => e
-  puts 'error'
   puts({ status: 'failure', error: e, backtrace: e.backtrace }.to_json)
   task_exit_code = 1
 ensure
