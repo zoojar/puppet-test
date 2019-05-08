@@ -44,7 +44,7 @@ def build_test_file_path(test_files_dir, test_file, role, opt_dir)
   test_file = "#{role}.rb" unless role.to_s.empty?
   if test_file.to_s.empty?
     begin
-      node_role = File.read(classes_txt_file).scan(%r{role::\K\w+})
+      node_role = File.read(classes_txt_file).scan(%r{role::\K\w+}).first
       puts "My role is: #{node_role}"
     rescue
       node_role = ''
