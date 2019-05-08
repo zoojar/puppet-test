@@ -42,42 +42,18 @@ plan acid::test(
   unless $test_params[test_tool] {
     fail_plan([
       'Aborting Plan: No test_tool specified in options hash.',
-      'Please specify one, Bolt example:',
-      '--params \'{\"test_params\":{\"test_tool\":\"serverspec\"}\'',
+      'Please specify one, Bolt example: --params \'{\"test_params\":{\"test_tool\":\"serverspec\"}\'',
     ].join(' '))
   }
 
-  # If unspecififed, detect opt dir based on kernel
-  $target_kernel = $test_params[kernel] ? {
-    undef   => run_task('facter_task', $target, 'Getting target OS kernel using facter_task', fact => 'kernel').first.value[kernel],
-    default => $test_params[kernel],
-  }
-
-  $test_params_defaults = {}
-  $test_params_defaults = $test_params_defaults + { 
-    opt_dir => $target_kernel ? { 
+  $test_params_defaults = {
+    tool_installed => true,
+    test_tool      => 'serverspec',
+    _catch_errors  => true,
+    opt_dir        => run_task('facter_task', $target, 'Getting target OS kernel', fact => 'kernel').first.value[kernel] ? { 
       'Windows' => 'c:/programdata/puppetlabs', 
       default   => '/opt/puppetlabs',
     }
-  }
-
-  $ctrl_kernel = $ctrl_params[kernel] ? {
-    undef   => run_task('facter_task', $controller, 'Getting controller OS kernel using facter_task', fact => 'kernel').first.value[kernel],
-    default => $ctrl_params[kernel],
-  }
-  
-  $ctrl_params_defaults = {}
-  $ctrl_params_defaults = $ctrl_params_defaults + { 
-    opt_dir => $ctrl_kernel ? {
-      'Windows' => { opt_dir => 'c:/programdata/puppetlabs' }, 
-      default   => { opt_dir => '/opt/puppetlabs' },
-    }
-  }
-
-  $test_params_defaults = {
-    tool_installed        => true,
-    test_tool             => 'serverspec',
-    _catch_errors         => true,
   }
 
   $ctrl_params_defaults = {
@@ -86,14 +62,15 @@ plan acid::test(
     install_gem         => true,
     gem_version         => latest,
     gem_install_options => [ '--no-ri', '--no-rdoc' ]
+    opt_dir             => run_task('facter_task', $controller, 'Getting controller OS kernel', fact => 'kernel').first.value[kernel] ? {
+      'Windows' => { opt_dir => 'c:/programdata/puppetlabs' }, 
+      default   => { opt_dir => '/opt/puppetlabs' },
+    }
   }
 
   # merge defaults with params
-  $_ctrl_params = $ctrl_params_defaults + $ctrl_params
-  $_test_params = $test_params_defaults + $test_params
-  $_ctrl_params = { lib_dir => "${_ctrl_params[opt_dir]}/acid_lib/${_test_params[test_tool]}" } + $ctrl_params
-  $_test_params = { lib_dir => "${_test_params[opt_dir]}/acid_lib/${_test_params[test_tool]}" } + $test_params
-
+  $_ctrl_params = $ctrl_params_defaults + { lib_dir => "${ctrl_params_defaults[opt_dir]}/acid_lib" } + $ctrl_params
+  $_test_params = $test_params_defaults + { lib_dir => "${test_params_defaults[opt_dir]}/acid_lib" } + $test_params
 
   # Stage the gems to tmp dir on the controller
   unless $_ctrl_params[install_gem] == false {
@@ -102,7 +79,9 @@ plan acid::test(
       package { $_test_params[test_tool]:
         ensure          => $_ctrl_params[gem_version],
         provider        => puppet_gem,
-        install_options => $_ctrl_params[gem_install_options] << { '--install_dir' => $_ctrl_params[lib_dir] },
+        install_options => $_ctrl_params[gem_install_options] + { 
+          '--install_dir' => "${_ctrl_params[lib_dir]}/${_test_params[test_tool]}"
+        },
       }
     }
   }
