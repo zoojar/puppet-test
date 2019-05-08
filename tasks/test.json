@@ -37,5 +37,8 @@
     }
   },
   "files": ["acid/tasks/","role/files/spec/"],
-  "input_method": "stdin"
+  "input_method": "stdin",
+  "implementations": [
+    { "name": "init.rb" }
+  ]
 }
