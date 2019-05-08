@@ -51,10 +51,9 @@ plan acid::test(
   ## because bolt tasks delete their tmp dirs after executing.
   ### If unspecififed, detect target's tmp dir based on kernel
   $target_kernel = $test_params[kernel] ? {
-    undef   => run_task('facter_task', $target, 'Getting target OS kernel using facter_task', fact => 'kernel').kernel,
+    undef   => run_task('facter_task', $target, 'Getting target OS kernel using facter_task', fact => 'kernel').first.result[kernel],
     default => $test_params[kernel]
   }
-  return $target_kernel
   case $target_kernel {
     /Linux|Darwin/: { $target_lib_dir = '/tmp' ; $ruby_bin  = '/opt/puppetlabs/bin/puppet/ruby' }
     'Windows':{ $target_lib_dir = 'c:/temp' ; $ruby_bin  = 'c:/programdata/puppetlabs/puppet/bin/ruby' }
@@ -117,7 +116,7 @@ plan acid::test(
   }
 
   # execute tests
-  $result = run_task("test::${_role_dir}", $target, "Executing tests with the following params: ${_test_params}", $_test_params)
+  $result = run_task("acid::test", $target, "Executing tests with the following params: ${_test_params}", $_test_params)
 
   if $result.ok {
     return $result
