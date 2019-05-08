@@ -86,7 +86,7 @@ plan acid::test(
     }
   }
 
-  if $target_kernel == 'Linux' and $_ctrl_params[compress_tool] {
+  if $_ctrl_params[compress_tool] {
     # Compress if target is linux, native file compression in windows...bleghhh
     run_command("tar -zcf ${_ctrl_params[lib_dir]}/${_test_params[test_tool]}.tar.gz ${_ctrl_params[lib_dir]}",
         $controller, '_catch_errors' => true, '_run_as' => 'root')
