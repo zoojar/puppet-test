@@ -77,7 +77,7 @@ def install_gem(gem_bin, gem, version, install_dir)
 end
 
 def run_test(test_tool, test_file, report_format)
-  require test_tool
+  require_relative test_tool
   RSpec::Core::Runner.run([test_file, '-c', '-f', report_format])
 end
 
@@ -101,6 +101,9 @@ begin
 
   # load gems into path
   $LOAD_PATH.unshift(*Dir.glob(File.expand_path("#{params['lib_dir']}/**/lib", __FILE__)))
+
+  # load helper for test tool
+  require_relative File.join(params['_installdir'], params['_modulename'], 'tasks', "#{params['test_tool']}_helper.rb")
 
   # execute test
   test_exit_code = run_test(params['test_tool'], abs_test_file, params['report_format'])
