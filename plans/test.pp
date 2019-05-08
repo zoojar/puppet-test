@@ -54,9 +54,11 @@ plan acid::test(
   }
 
   $test_params_defaults = {}
-  $test_params_defaults = $test_params_defaults + $target_kernel ? { 
-    'Windows' => { opt_dir => 'c:/programdata/puppetlabs' }, 
-    default   => { opt_dir => '/opt/puppetlabs' },
+  $test_params_defaults = $test_params_defaults + { 
+    opt_dir => $target_kernel ? { 
+      'Windows' => 'c:/programdata/puppetlabs', 
+      default   => '/opt/puppetlabs',
+    }
   }
 
   $ctrl_kernel = $ctrl_params[kernel] ? {
@@ -65,9 +67,11 @@ plan acid::test(
   }
   
   $ctrl_params_defaults = {}
-  $ctrl_params_defaults = $ctrl_params_defaults + $ctrl_kernel ? {
-    'Windows' => { opt_dir => 'c:/programdata/puppetlabs' }, 
-    default   => { opt_dir => '/opt/puppetlabs' },
+  $ctrl_params_defaults = $ctrl_params_defaults + { 
+    opt_dir => $ctrl_kernel ? {
+      'Windows' => { opt_dir => 'c:/programdata/puppetlabs' }, 
+      default   => { opt_dir => '/opt/puppetlabs' },
+    }
   }
 
   $test_params_defaults = {
