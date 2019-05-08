@@ -82,7 +82,7 @@ def install_gem(gem_bin, gem, version, install_dir)
 end
 
 begin
-  $task_exit_code = 1
+  task_exit_code = 1
 
   # determine absolute path of test file to be executed
   abs_test_file = build_test_file_path(File.join(params['_installdir'], params['test_files_dir']),
