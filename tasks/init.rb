@@ -24,6 +24,7 @@ gem_bin                         = case Facter.value(:kernel)
                                   else
                                     File.join('/', 'opt', 'puppetlabs', 'puppet', 'bin', 'gem')
                                   end
+params['_modulename']           = 'acid' if params['_modulename'].nil?
 params['task_name']             = params['_task'].to_s.split('::').last if params['task_name'].nil?
 params['gem_bin']               = gem_bin if params['gem_bin'].nil?
 params['test_tool']             = 'serverspec' if params['test_tool'].nil?
@@ -35,6 +36,7 @@ params['test_files_dir']        = File.join('role', 'files', 'spec', 'acceptance
 params['report_format']         = 'documentation' if params['report_format'].nil?
 params['tool_installed']        = false if params['tool_installed'].nil?
 params['suppress_exit_code']    = false if params['suppress_exit_code'].nil?
+
 
 def build_test_file_path(test_files_dir, test_file, role)
   # Returns a file path based on the role or test_file specified,
@@ -85,9 +87,10 @@ begin
   task_exit_code = 1
 
   # determine absolute path of test file to be executed
-  abs_test_file = build_test_file_path(File.join(params['_installdir'], params['test_files_dir']),
-                                      params['test_file'],
-                                      params['role']) 
+  abs_test_file = build_test_file_path(File.join(params['_installdir'],
+                                                 params['test_files_dir']),
+                                                 params['test_file'],
+                                                 params['role']) 
 
 
   # install gems for test tooling
@@ -103,7 +106,7 @@ begin
   $LOAD_PATH.unshift(*Dir.glob(File.expand_path(lib_dir, __FILE__)))
 
   # require helper for specific test tool
-  require_relative File.join(params['_installdir'], 'test', 'tasks', "#{params['test_tool']}_helper.rb")
+  require_relative File.join(params['_installdir'], params['_modulename'], 'tasks', "#{params['test_tool']}_helper.rb")
 
   # execute test
   test_exit_code = run_test(params['test_tool'], abs_test_file, params['report_format'])
