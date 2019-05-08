@@ -76,11 +76,6 @@ def install_gem(gem_bin, gem, version, install_dir)
   raise "Gem install failed: #{stdout} #{stderr}" unless exitcode.success?
 end
 
-def run_test(test_tool, test_file, report_format)
-  require_relative test_tool
-  RSpec::Core::Runner.run([test_file, '-c', '-f', report_format])
-end
-
 begin
   task_exit_code = 1
 
