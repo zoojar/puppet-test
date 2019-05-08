@@ -107,6 +107,7 @@ begin
   # load gems into path
   lib_dir = "#{params['test_tool_install_dir']}/**/lib"
   $LOAD_PATH.unshift(*Dir.glob(File.expand_path(lib_dir, __FILE__)))
+  puts $LOAD_PATH
 
   # require helper for specific test tool
   #require_relative File.join(params['_installdir'], params['_modulename'], 'tasks', "#{params['test_tool']}_helper.rb")
