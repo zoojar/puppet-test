@@ -1,14 +1,13 @@
 #!/opt/puppetlabs/puppet/bin/ruby
 # This task picks up a test for a given role
-# Store your tests at: <control-repo>/site-modules/roles/files/tests/<test_tool>/<role>.rb
-# Roles & Profiles: some use "role", others use "roles"
-# Task metadata allows for both naming conventions; "role" and "roles"
+# Store your tests at: <control-repo>/site-modules/role/spec/acceptance/<role>.rb
+# Roles & Profiles: use "role"
 # Example usage with bolt (running from the control-repo dir):
 #   bolt task run test::roles -n webserver-01.local --modulepath . \
 #     --params '{ "test_tool": "inspec" , "test_file": "web_server.rb" }'
 #   It does the following things:
 #     1. Installs the inspec gems on webserver-01.local in test_tool_install_dir (default: /tmp/puppet_test/gems)
-#     2. Copies the files from <control-repo>/site-modules/roles/files/tests/inspec/web_server.rb
+#     2. Copies the files from <control-repo>/site-modules/role/spec/acceptance/web_server.rb
 #     3. Executes inspec runner with the web_server.rb spec and returns the report as stdout
 
 require 'json'
@@ -119,6 +118,7 @@ begin
     task_exit_code = test_exit_code
   end
 rescue => e
+  puts 'error'
   puts({ status: 'failure', error: e, backtrace: e.backtrace }.to_json)
   task_exit_code = 1
 ensure
