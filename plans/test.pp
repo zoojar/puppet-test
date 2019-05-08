@@ -1,5 +1,5 @@
 # This plan should be run from a Puppet server or a linux host with:
-# 1. capability for pcp transport to target nodes
+# 1. capability for pcp transport to target nodes ('puppetlabs-bolt_shim' module required)
 # 2. dev tools (make gcc / build-essential) present for gem staging
 # Example usage:
 #  IMPORTANT: Tests should be stored with roles at site-modules/roles/files/tests (or site-modules/role/files/tests),
@@ -9,14 +9,14 @@
 #  If running via Bolt; roles must be on bolt's configured modulepath - run this from your control-repo:
 #
 #
-#    bolt plan run test::role --modulepath . --run-as root --params \
+#    bolt plan run acid::test --modulepath . --run-as root --params \
 #    '{"target":"webserver.local","test_params":{"test_tool":"serverspec", \
 #    "test_file":"webserver.rb"},"ctrl_params":{"tmp_dir":"/Users/Shared/tmp"}}'
 #
 #
 # NB. If the 'test_file' param is omitted then roles will be auto-detected using the target's 'role' fact
 
-plan test::role(
+plan acid::test(
   TargetSpec           $target,
   Optional[TargetSpec] $controller    = get_targets('localhost')[0],
   Optional[Hash]       $ctrl_params   = {},
@@ -35,7 +35,7 @@ plan test::role(
       'Aborting Plan: No role or roles module found on the module path.',
       'This task picks up a test for a given role.',
       'Store your tests at: ',
-      '<control-repo>/site-modules/roles/files/tests/<test_tool>/<role>.rb',
+      '<control-repo>/site-modules/role/files/tests/<test_tool>/<role>.rb',
     ].join(' '))
   }
 
@@ -52,19 +52,19 @@ plan test::role(
   ## because bolt tasks delete their tmp dirs after executing.
   ### If unspecififed, detect target's tmp dir based on kernel
   $target_kernel = $test_params[kernel] ? {
-    undef   => run_task('test::get_fact', $target, 'Detecting OS kernel using facter via task: test::get_fact', fact => 'kernel').first.value[_output],
+    undef   => run_task('facter_task', $target, 'Detecting OS kernel using facter via task: facter_tast', fact => 'kernel').first.value[_output],
     default => $test_params[kernel]
   }
-
+  return $target_kernel
   case $target_kernel {
-    /Linux|Darwin/: { $target_tmp_dir = '/tmp' ; $ruby_bin  = '/opt/puppetlabs/bin/puppet/ruby' }
-    'Windows':{ $target_tmp_dir = 'c:/temp' ; $ruby_bin  = 'c:/programdata/puppetlabs/puppet/bin/ruby' }
+    /Linux|Darwin/: { $target_lib_dir = '/tmp' ; $ruby_bin  = '/opt/puppetlabs/bin/puppet/ruby' }
+    'Windows':{ $target_lib_dir = 'c:/temp' ; $ruby_bin  = 'c:/programdata/puppetlabs/puppet/bin/ruby' }
     default: { raise('unsupported os') }
   }
 
   $test_params_defaults = {
     tool_installed        => true,
-    test_tool_install_dir => "${target_tmp_dir}/puppet_test/${test_params[test_tool]}",
+    test_tool_install_dir => "${target_lib_dir}/puppet_test/${test_params[test_tool]}",
     _catch_errors         => true,
   }
 
@@ -96,23 +96,24 @@ plan test::role(
       }
     }
   }
+  run_task
 
   if $target_kernel == 'Linux' and $_ctrl_params[compress_tool] {
     # Compress if target is linux, native file compression in windows...bleghhh
     run_command("tar -zcf ${_ctrl_gem_dir}/${_test_tool}.tar.gz ${_ctrl_gem_dir}",
         $controller, '_catch_errors' => true, '_run_as' => 'root')
     # upload gems from controller to tmp dir on target
-    upload_file("${_ctrl_gem_dir}/${_test_tool}.tar.gz", "${target_tmp_dir}/${_test_tool}.tar.gz",
+    upload_file("${_ctrl_gem_dir}/${_test_tool}.tar.gz", "${target_lib_dir}/${_test_tool}.tar.gz",
         $target, '_catch_errors' => true, '_run_as' => 'root')
     # Extract
-    run_command("mkdir -p ${_target_gem_dir} && tar -zxf ${target_tmp_dir}/${_test_tool}.tar.gz -C ${_target_gem_dir}",
+    run_command("mkdir -p ${_target_gem_dir} && tar -zxf ${target_lib_dir}/${_test_tool}.tar.gz -C ${_target_gem_dir}",
         $target, '_catch_errors' => true, '_run_as' => 'root')
   } else {
     # upload tool
     upload_file($_ctrl_gem_dir,
                 $_target_gem_dir,
                 $target,
-                "Uploading gems from '${_ctrl_gem_dir}' to target '${target}' in tmpdir '${target_tmp_dir}'",
+                "Uploading gems from '${_ctrl_gem_dir}' to target '${target}' in tmpdir '${target_lib_dir}'",
                 '_catch_errors' => true,
                 '_run_as' => 'root')
   }
