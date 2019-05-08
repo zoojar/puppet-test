@@ -74,7 +74,7 @@ plan acid::test(
     run_command("mkdir -p ${_ctrl_params[lib_dir]}", $controller, '_catch_errors' => true, '_run_as' => 'root')
     run_command([
         "${_ctrl_params[opt_dir]}/puppet/bin/gem install ${_test_params[test_tool]}",
-        "--install_dir=${_ctrl_params[lib_dir]}/${_test_params[test_tool]}",
+        "--install_dir=${_ctrl_params[lib_dir]}",
         *$_ctrl_params[gem_install_options],
       ].join(' '),
       $controller, '_catch_errors' => true, '_run_as' => 'root')
