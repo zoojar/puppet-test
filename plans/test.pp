@@ -93,8 +93,6 @@ plan acid::test(
     run_command("tar -zxf ${_test_params[lib_dir]}/../${_test_params[test_tool]}.tar.gz -C ${_test_params[lib_dir]}",
         $target, '_catch_errors' => true, '_run_as' => 'root')
   } else {
-    # make lib dir on target
-    run_command("mkdir -p ${_test_params[lib_dir]}", $target, '_catch_errors' => true, '_run_as' => 'root')
     # upload lib dir from conntroller to target
     upload_file($_ctrl_params[lib_dir],
                 $_test_params[lib_dir],
