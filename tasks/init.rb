@@ -12,13 +12,13 @@ opt_dir                         = case Facter.value(:kernel)
                                   else
                                     File.join('/', 'opt', 'puppetlabs')
                                   end
-params['puppet_opt_dir']        = opt_dir if params['opt_dir'].nil?
+params['opt_dir']               = opt_dir if params['opt_dir'].nil?
 params['_modulename']           = 'acid' if params['_modulename'].nil?
 params['task_name']             = params['_task'].to_s.split('::').last if params['task_name'].nil?
-params['gem_bin']               = File.join(params['puppet_opt_dir'], 'puppet', 'bin', 'gem') if params['gem_bin'].nil?
+params['gem_bin']               = File.join(params['opt_dir'], 'puppet', 'bin', 'gem') if params['gem_bin'].nil?
 params['test_tool']             = 'serverspec' if params['test_tool'].nil?
 params['test_tool_version']     = '> 0' if params['test_tool_version'].nil?
-params['lib_dir']               = File.join(params['puppet_opt_dir'], "#{params['_modulename']}_lib", params['test_tool']) if params['lib_dir'].nil?
+params['lib_dir']               = File.join(params['opt_dir'], "#{params['_modulename']}_lib", params['test_tool']) if params['lib_dir'].nil?
 params['test_file']             = '' if params['test_file'].nil?
 params['role']                  = '' if params['role'].nil?
 params['test_files_dir']        = File.join('role', 'files', 'tests', params['test_tool']) if params['test_files_dir'].nil?
@@ -89,7 +89,7 @@ begin
                                                  params['test_files_dir']),
                                                  params['test_file'],
                                                  params['role'],
-                                                 params['puppet_opt_dir'])
+                                                 params['opt_dir'])
 
   # install gems for test tooling
   unless params['tool_installed']
