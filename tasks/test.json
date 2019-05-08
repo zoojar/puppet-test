@@ -37,8 +37,5 @@
     }
   },
   "files": ["test/tasks/","role/files/spec/"],
-  "input_method": "stdin",
-  "implementations": [
-    { "name": "test.rb" }
-  ]
+  "input_method": "stdin"
 }
