@@ -1,5 +1,5 @@
 {
-  "name": "zoojar-test",
+  "name": "zoojar-acid",
   "version": "1.3.4",
   "author": "David Newton",
   "summary": "Tasks that execute tests against roles using various test tools such as minitest, serverspec & inspec",
