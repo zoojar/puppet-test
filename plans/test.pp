@@ -38,14 +38,6 @@ plan acid::test(
     ].join(' '))
   }
 
-  # verify that a test tool is specified (serverspec/inspec/minitest)
-  unless $test_params[test_tool] {
-    fail_plan([
-      'Aborting Plan: No test_tool specified in options hash.',
-      'Please specify one, Bolt example: --params \'{\"test_params\":{\"test_tool\":\"serverspec\"}\'',
-    ].join(' '))
-  }
-
   $test_params_defaults = {
     tool_installed => true,
     test_tool      => 'serverspec',
@@ -69,8 +61,13 @@ plan acid::test(
   }
 
   # merge defaults
-  $_ctrl_params = $ctrl_params_defaults + { lib_dir => "${ctrl_params_defaults[opt_dir]}/acid_lib" } + $ctrl_params
-  $_test_params = $test_params_defaults + { lib_dir => "${test_params_defaults[opt_dir]}/acid_lib" } + $test_params
+  $_test_tool = $test_params['test_tool'] ? {
+    undef   => 'serverspec',
+    default => $test_params['test_tool'],
+  }
+
+  $_ctrl_params = $ctrl_params_defaults + { lib_dir => "${ctrl_params_defaults[opt_dir]}/acid_lib/${_test_tool}" } + $ctrl_params
+  $_test_params = $test_params_defaults + { lib_dir => "${test_params_defaults[opt_dir]}/acid_lib/${_test_tool}" } + $test_params
 
   # Stage the gems to tmp dir on the controller
   unless $_ctrl_params[install_gem] == false {
