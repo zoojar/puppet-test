@@ -35,7 +35,7 @@ params['test_files_dir']        = File.join('role', 'files', 'tests', params['te
 params['report_format']         = 'documentation' if params['report_format'].nil?
 params['tool_installed']        = false if params['tool_installed'].nil?
 params['suppress_exit_code']    = false if params['suppress_exit_code'].nil?
-params['classes_txt_file']      = File.join(opt_dir, 'puppet', 'cache', 'state', 'classes.txt') if param['classes_txt_file'].nil?
+params['classes_txt_file']      = File.join(opt_dir, 'puppet', 'cache', 'state', 'classes.txt') if params['classes_txt_file'].nil?
 
 def build_test_file_path(test_files_dir, test_file, role)
   # Returns a file path based on the role or test_file specified,
