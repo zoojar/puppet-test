@@ -52,7 +52,7 @@ plan acid::test(
   ## because bolt tasks delete their tmp dirs after executing.
   ### If unspecififed, detect target's tmp dir based on kernel
   $target_kernel = $test_params[kernel] ? {
-    undef   => run_task('facter_task', $target, 'Detecting OS kernel using facter via task: facter_tast', fact => 'kernel').first.value[_output],
+    undef   => run_task('facter_task', $target, 'Detecting OS kernel using facter via task: facter_tast', fact => 'kernel'),
     default => $test_params[kernel]
   }
   return $target_kernel
