@@ -29,7 +29,7 @@ params['task_name']             = params['_task'].to_s.split('::').last if param
 params['gem_bin']               = File.join(params['puppet_opt_dir'], 'puppet', 'bin', 'gem') if params['gem_bin'].nil?
 params['test_tool']             = 'serverspec' if params['test_tool'].nil?
 params['test_tool_version']     = '> 0' if params['test_tool_version'].nil?
-params['test_tool_install_dir'] = File.join(params['_installdir'], 'puppet_test', params['test_tool']) if params['test_tool_install_dir'].nil?
+params['test_tool_install_dir'] = File.join(params['puppet_opt_dir'], "#{params['_modulename']}_lib", params['test_tool']) if params['test_tool_install_dir'].nil?
 params['test_file']             = '' if params['test_file'].nil?
 params['role']                  = '' if params['role'].nil?
 params['test_files_dir']        = File.join('role', 'files', 'tests', params['test_tool']) if params['test_files_dir'].nil?
@@ -101,8 +101,7 @@ begin
                                                  params['test_files_dir']),
                                                  params['test_file'],
                                                  params['role'],
-                                                 params['puppet_opt_dir']) 
-
+                                                 params['puppet_opt_dir'])
 
   # install gems for test tooling
   unless params['tool_installed']
@@ -115,9 +114,6 @@ begin
   # load gems into path
   lib_dir = "#{params['test_tool_install_dir']}/**/lib"
   $LOAD_PATH.unshift(*Dir.glob(File.expand_path(lib_dir, __FILE__)))
-
-  # require helper for specific test tool
-  #require_relative File.join(params['_installdir'], params['_modulename'], 'tasks', "#{params['test_tool']}_helper.rb")
 
   # execute test
   test_exit_code = run_test(params['test_tool'], abs_test_file, params['report_format'])
