@@ -68,22 +68,19 @@ plan acid::test(
     },
   }
 
-  # merge defaults with params
+  # merge defaults
   $_ctrl_params = $ctrl_params_defaults + { lib_dir => "${ctrl_params_defaults[opt_dir]}/acid_lib" } + $ctrl_params
   $_test_params = $test_params_defaults + { lib_dir => "${test_params_defaults[opt_dir]}/acid_lib" } + $test_params
 
   # Stage the gems to tmp dir on the controller
   unless $_ctrl_params[install_gem] == false {
-    apply($controller, _catch_errors => true) {
-      file { $_ctrl_params[lib_dir] : ensure => directory }
-      package { $_test_params[test_tool]:
-        ensure          => $_ctrl_params[gem_version],
-        provider        => puppet_gem,
-        install_options => $_ctrl_params[gem_install_options] + { 
-          '--install_dir' => "${_ctrl_params[lib_dir]}/${_test_params[test_tool]}"
-        },
-      }
-    }
+    run_command("mkdir -p ${_ctrl_params[lib_dir]}", $controller, '_catch_errors' => true, '_run_as' => 'root')
+    run_command([
+        "${_ctrl_params[opt_dir]}/puppet/bin/gem install ${_test_params[test_tool]}",
+        "--install_dir=${_ctrl_params[lib_dir]}/${_test_params[test_tool]}",
+        *$_ctrl_params[gem_install_options],
+      ].join(' '),
+      $controller, '_catch_errors' => true, '_run_as' => 'root')
   }
 
   if $_ctrl_params[compress_tool] {
