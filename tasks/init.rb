@@ -17,15 +17,15 @@ require 'facter'
 require 'stringio'
 
 params                          = JSON.parse(STDIN.read)
-gem_bin                         = case Facter.value(:kernel)
+opt_dir                         = case Facter.value(:kernel)
                                   when 'Windows'
-                                    File.join('c:', 'programdata', 'puppetlabs', 'puppet', 'bin', 'gem')
+                                    File.join('c:', 'programdata', 'puppetlabs')
                                   else
-                                    File.join('/', 'opt', 'puppetlabs', 'puppet', 'bin', 'gem')
-                                  end
+                                    File.join('/', 'opt', 'puppetlabs')
+                                  end       
 params['_modulename']           = 'acid' if params['_modulename'].nil?
 params['task_name']             = params['_task'].to_s.split('::').last if params['task_name'].nil?
-params['gem_bin']               = gem_bin if params['gem_bin'].nil?
+params['gem_bin']               = File.join(opt_dir, 'puppet', 'bin', 'gem') if params['gem_bin'].nil?
 params['test_tool']             = 'serverspec' if params['test_tool'].nil?
 params['test_tool_version']     = '> 0' if params['test_tool_version'].nil?
 params['test_tool_install_dir'] = File.join(params['_installdir'], 'puppet_test', params['test_tool']) if params['test_tool_install_dir'].nil?
@@ -35,19 +35,26 @@ params['test_files_dir']        = File.join('role', 'files', 'spec', 'acceptance
 params['report_format']         = 'documentation' if params['report_format'].nil?
 params['tool_installed']        = false if params['tool_installed'].nil?
 params['suppress_exit_code']    = false if params['suppress_exit_code'].nil?
+params['classes_txt_file']      = File.join(opt_dir, 'puppet', 'cache', 'state', 'classes.txt') if param['classes_txt_file'].nil?
 
 def build_test_file_path(test_files_dir, test_file, role)
   # Returns a file path based on the role or test_file specified,
   # if no role or test_file is specifed then we try to determine the target node's role.
   test_file = "#{role}.rb" unless role.to_s.empty?
   if test_file.to_s.empty?
-    facter_role = Facter.value(:role).to_s
-    if facter_role.strip.empty?
-      raise ['Tried, but unable to detect this node\'s role using facter.',
-             'Did you mean to provide a test_file parameter to this task?',
-             'eg: test_file=web_server.rb'].join(' ')
+    begin
+      node_role = File.read(params['classes_txt_file'])[/role::\K\w+/]
+      puts "My role is: #{node_role}"
+    rescue
+      node_role = ''
+    end
+    if node_role.strip.empty?
+      raise ['Unable to detect this node\'s role - perhaps puppet has not yet run?',
+             "(I tried to determine the role using data from: #{classes_txt_file})"
+             'Alternativey, you can provide a test_file parameter to this task:',
+             'eg. test_file=web_server.rb'].join(' ')
     else
-      test_file = "#{facter_role}.rb"
+      test_file = "#{node_role}.rb"
     end
   end
   abs_test_file = File.join(test_files_dir, test_file)
@@ -82,6 +89,9 @@ def install_gem(gem_bin, gem, version, install_dir)
 end
 
 def run_test(test_tool, test_file, report_format)
+  Dir.chdir("my_app") do
+    system "rails server &"
+  end
   require test_tool
   RSpec::Core::Runner.run([test_file, '-c', '-f', report_format])
 end
