@@ -40,7 +40,7 @@
       "description": "Puppet opt dir."
     }
   },
-  "files": ["role/files/tests/"],
+  "files": ["acid/tasks", "role/files/tests/"],
   "input_method": "stdin",
   "implementations": [
     { "name": "init.rb" }
