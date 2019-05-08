@@ -36,7 +36,7 @@
       "description": "Always return exit code of '0' regardless of whether the test failed or not. Default is: false (the task will return the exit code from the test and will fail if the test fails)."
     }
   },
-  "files": ["acid/tasks/","role/files/spec/"],
+  "files": ["role/files/spec/"],
   "input_method": "stdin",
   "implementations": [
     { "name": "init.rb" }
