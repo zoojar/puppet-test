@@ -47,28 +47,29 @@ plan acid::test(
     ].join(' '))
   }
 
-  # We need a static dir to upload gems to,
-  ## because bolt tasks delete their tmp dirs after executing.
-  ### If unspecififed, detect target's tmp dir based on kernel
+  # If unspecififed, detect opt dir based on kernel
   $target_kernel = $test_params[kernel] ? {
     undef   => run_task('facter_task', $target, 'Getting target OS kernel using facter_task', fact => 'kernel').first.value[kernel],
-    default => $test_params[kernel]
+    default => $test_params[kernel],
   }
-  case $target_kernel {
-    /Linux|Darwin/: { $target_lib_dir = '/tmp' ; $ruby_bin  = '/opt/puppetlabs/bin/puppet/ruby' }
-    'Windows':{ $target_lib_dir = 'c:/temp' ; $ruby_bin  = 'c:/programdata/puppetlabs/puppet/bin/ruby' }
-    default: { raise('unsupported os') }
+
+  $test_params_defaults[opt_dir] = $target_kernel ? { 'Windows' => 'c:/programdata/puppetlabs', default => '/opt/puppetlabs' }
+
+  $ctrl_kernel = $ctrl_params[kernel] ? {
+    undef   => run_task('facter_task', $controller, 'Getting controller OS kernel using facter_task', fact => 'kernel').first.value[kernel],
+    default => $ctrl_params[kernel],
   }
+  
+  $ctrl_params_defaults[opt_dir] = $ctrl_kernel ? { 'Windows' => 'c:/programdata/puppetlabs', default => '/opt/puppetlabs' }
 
   $test_params_defaults = {
     tool_installed        => true,
-    test_tool_install_dir => "${target_lib_dir}/puppet_test/${test_params[test_tool]}",
+    test_tool             => 'serverspec',
     _catch_errors         => true,
   }
 
   $ctrl_params_defaults = {
     target              => 'localhost',
-    tmp_dir             => '/tmp',
     compress_tool       => false,
     install_gem         => true,
     gem_version         => latest,
@@ -79,38 +80,40 @@ plan acid::test(
   $_ctrl_params    = $ctrl_params_defaults + $ctrl_params
   $_test_params    = $test_params_defaults + $test_params
   $_test_tool      = $_test_params[test_tool]
-  $_target_gem_dir = $_test_params[test_tool_install_dir]
+  unless $test_params[lib_dir] { $_test_params[lib_dir] = "${opt_dir}/acid_lib/${_test_params[test_tool]}" }
+  unless $ctrl_params[lib_dir] { $_ctrl_params[lib_dir] = "${opt_dir}/acid_lib/${_test_params[test_tool]}" }
 
   # Stage the gems to tmp dir on the controller
-  # TODO: FIX THIS BROKEN GEM STAGING - WE NEED A CLEAN TMP OR A WAY TO RESOLVE CACHED GEMS AND PULL THE RIGHT ONES IN
-  $_ctrl_gem_dir = "${_ctrl_params[tmp_dir]}/puppet_test/${$_test_tool}"
+  $_ctrl_gem_dir = "${_ctrl_params[lib_dir]}/${$_test_tool}"
   unless $_ctrl_params[install_gem] == false {
     apply($controller, _catch_errors => true) {
-      file { $_ctrl_gem_dir: ensure => directory }
+      file { $_ctrl_params[lib_dir] : ensure => directory }
       package { $_test_tool:
         ensure          => $_ctrl_params[gem_version],
         provider        => puppet_gem,
-        install_options => $_ctrl_params[gem_install_options] << { '--install_dir' => $_ctrl_gem_dir },
+        install_options => $_ctrl_params[gem_install_options] << { '--install_dir' => $_ctrl_params[lib_dir] },
       }
     }
   }
 
   if $target_kernel == 'Linux' and $_ctrl_params[compress_tool] {
     # Compress if target is linux, native file compression in windows...bleghhh
-    run_command("tar -zcf ${_ctrl_gem_dir}/${_test_tool}.tar.gz ${_ctrl_gem_dir}",
+    run_command("tar -zcf ${_ctrl_params[lib_dir]}/${_test_tool}.tar.gz ${_ctrl_params[lib_dir]}",
         $controller, '_catch_errors' => true, '_run_as' => 'root')
+    # make lib dir on target
+    run_command("mkdir -p ${_test_params[lib_dir]}", $target, '_catch_errors' => true, '_run_as' => 'root')
     # upload gems from controller to tmp dir on target
-    upload_file("${_ctrl_gem_dir}/${_test_tool}.tar.gz", "${target_lib_dir}/${_test_tool}.tar.gz",
+    upload_file("${_ctrl_params[lib_dir]}/${_test_tool}.tar.gz", "${_test_params[lib_dir]}/../${_test_tool}.tar.gz",
         $target, '_catch_errors' => true, '_run_as' => 'root')
     # Extract
-    run_command("mkdir -p ${_target_gem_dir} && tar -zxf ${target_lib_dir}/${_test_tool}.tar.gz -C ${_target_gem_dir}",
+    run_command("tar -zxf ${_test_params[lib_dir]}/../${_test_tool}.tar.gz -C ${_test_params[lib_dir]}",
         $target, '_catch_errors' => true, '_run_as' => 'root')
   } else {
     # upload tool
-    upload_file($_ctrl_gem_dir,
-                $_target_gem_dir,
+    upload_file($_ctrl_params[lib_dir],
+                $_test_params[lib_dir],
                 $target,
-                "Uploading gems from '${_ctrl_gem_dir}' to target '${target}' in tmpdir '${target_lib_dir}'",
+                "Uploading gems from '${_ctrl_params[lib_dir]}' to target '${target}' in tmpdir '${_test_params[lib_dir]}'",
                 '_catch_errors' => true,
                 '_run_as' => 'root')
   }

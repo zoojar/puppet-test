@@ -15,7 +15,7 @@
       "type": "Optional[Boolean]",
       "description": "Let the task know that the tool is already installed, don't install it"
     },
-    "test_tool_install_dir": {
+    "lib_dir": {
       "type": "Optional[String]",
       "description": "Test tool framework (gem) install dir."
     },

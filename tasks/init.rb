@@ -18,7 +18,7 @@ params['task_name']             = params['_task'].to_s.split('::').last if param
 params['gem_bin']               = File.join(params['puppet_opt_dir'], 'puppet', 'bin', 'gem') if params['gem_bin'].nil?
 params['test_tool']             = 'serverspec' if params['test_tool'].nil?
 params['test_tool_version']     = '> 0' if params['test_tool_version'].nil?
-params['test_tool_install_dir'] = File.join(params['puppet_opt_dir'], "#{params['_modulename']}_lib", params['test_tool']) if params['test_tool_install_dir'].nil?
+params['lib_dir']               = File.join(params['puppet_opt_dir'], "#{params['_modulename']}_lib", params['test_tool']) if params['lib_dir'].nil?
 params['test_file']             = '' if params['test_file'].nil?
 params['role']                  = '' if params['role'].nil?
 params['test_files_dir']        = File.join('role', 'files', 'tests', params['test_tool']) if params['test_files_dir'].nil?
@@ -96,11 +96,11 @@ begin
     install_gem(params['gem_bin'],
                 params['test_tool'],
                 params['test_tool_version'],
-                params['test_tool_install_dir'])
+                params['lib_dir'])
   end
 
   # load gems into path
-  $LOAD_PATH.unshift(*Dir.glob(File.expand_path("#{params['test_tool_install_dir']}/**/lib", __FILE__)))
+  $LOAD_PATH.unshift(*Dir.glob(File.expand_path("#{params['lib_dir']}/**/lib", __FILE__)))
 
   # execute test
   test_exit_code = run_test(params['test_tool'], abs_test_file, params['report_format'])
