@@ -36,8 +36,6 @@ params['report_format']         = 'documentation' if params['report_format'].nil
 params['tool_installed']        = false if params['tool_installed'].nil?
 params['suppress_exit_code']    = false if params['suppress_exit_code'].nil?
 
-puts "Running #{params['_modulename']}"
-
 def build_test_file_path(test_files_dir, test_file, role)
   # Returns a file path based on the role or test_file specified,
   # if no role or test_file is specifed then we try to determine the target node's role.
@@ -83,6 +81,11 @@ def install_gem(gem_bin, gem, version, install_dir)
   raise "Gem install failed: #{stdout} #{stderr}" unless exitcode.success?
 end
 
+def run_test(test_tool, test_file, report_format)
+  require test_tool
+  RSpec::Core::Runner.run([test_file, '-c', '-f', report_format])
+end
+
 begin
   task_exit_code = 1
 
@@ -106,7 +109,7 @@ begin
   $LOAD_PATH.unshift(*Dir.glob(File.expand_path(lib_dir, __FILE__)))
 
   # require helper for specific test tool
-  require_relative File.join(params['_installdir'], params['_modulename'], 'tasks', "#{params['test_tool']}_helper.rb")
+  #require_relative File.join(params['_installdir'], params['_modulename'], 'tasks', "#{params['test_tool']}_helper.rb")
 
   # execute test
   test_exit_code = run_test(params['test_tool'], abs_test_file, params['report_format'])
