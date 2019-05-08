@@ -8,10 +8,9 @@
 #  This plan will fail if this path is not accessible!
 #  If running via Bolt; roles must be on bolt's configured modulepath - run this from your control-repo:
 #
-#
-#    bolt plan run acid::test --modulepath . --run-as root --params \
-#    '{"target":"webserver.local","test_params":{"test_tool":"serverspec", \
-#    "test_file":"webserver.rb"},"ctrl_params":{"tmp_dir":"/Users/Shared/tmp"}}'
+# git clone $control_repo && cd $control_repo
+# r10k puppetfile install
+# bolt plan run acid::test --modulepath modules:site-modules --run-as root --params   '{"target":"pcp://ci-agent.local","test_params":{"test_tool":"serverspec"}}'
 #
 #
 # NB. If the 'test_file' param is omitted then roles will be auto-detected using the target's 'role' fact
@@ -52,7 +51,7 @@ plan acid::test(
   ## because bolt tasks delete their tmp dirs after executing.
   ### If unspecififed, detect target's tmp dir based on kernel
   $target_kernel = $test_params[kernel] ? {
-    undef   => run_task('facter_task', $target, 'Detecting OS kernel using facter via task: facter_tast', fact => 'kernel'),
+    undef   => run_task('facter_task', $target, 'Getting target OS kernel using facter_task', fact => 'kernel')[kernel],
     default => $test_params[kernel]
   }
   return $target_kernel
