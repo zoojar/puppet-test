@@ -100,7 +100,7 @@ plan acid::test(
     upload_file($_ctrl_params[lib_dir],
                 $_test_params[lib_dir],
                 $target,
-                "Uploading gems from '${_ctrl_params[lib_dir]}' to target '${target}' in tmpdir '${_test_params[lib_dir]}'",
+                "Uploading gems from '${_ctrl_params[lib_dir]}' to target '${target}' at '${_test_params[lib_dir]}'",
                 '_catch_errors' => true,
                 '_run_as' => 'root')
   }
