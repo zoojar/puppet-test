@@ -45,7 +45,6 @@ def build_test_file_path(test_files_dir, test_file, role, opt_dir)
   if test_file.to_s.empty?
     begin
       node_role = File.read(classes_txt_file).scan(%r{role::\K\w+}).first
-      puts "My role is: #{node_role}"
     rescue
       node_role = ''
     end
@@ -90,9 +89,6 @@ def install_gem(gem_bin, gem, version, install_dir)
 end
 
 def run_test(test_tool, test_file, report_format)
-  Dir.chdir("my_app") do
-    system "rails server &"
-  end
   require test_tool
   RSpec::Core::Runner.run([test_file, '-c', '-f', report_format])
 end
@@ -119,7 +115,6 @@ begin
   # load gems into path
   lib_dir = "#{params['test_tool_install_dir']}/**/lib"
   $LOAD_PATH.unshift(*Dir.glob(File.expand_path(lib_dir, __FILE__)))
-  puts $LOAD_PATH
 
   # require helper for specific test tool
   #require_relative File.join(params['_installdir'], params['_modulename'], 'tasks', "#{params['test_tool']}_helper.rb")
