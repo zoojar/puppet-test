@@ -56,7 +56,7 @@ plan acid::test(
   $test_params_defaults = {}
   $test_params_defaults = $test_params_defaults + $target_kernel ? { 
     'Windows' => { opt_dir => 'c:/programdata/puppetlabs' }, 
-    default => '/opt/puppetlabs' 
+    default   => { opt_dir => '/opt/puppetlabs' },
   }
 
   $ctrl_kernel = $ctrl_params[kernel] ? {
@@ -64,7 +64,11 @@ plan acid::test(
     default => $ctrl_params[kernel],
   }
   
-  $ctrl_params_defaults[opt_dir] = $ctrl_kernel ? { 'Windows' => 'c:/programdata/puppetlabs', default => '/opt/puppetlabs' }
+  $ctrl_params_defaults = {}
+  $ctrl_params_defaults = $ctrl_params_defaults + $ctrl_kernel ? {
+    'Windows' => { opt_dir => 'c:/programdata/puppetlabs' }, 
+    default   => { opt_dir => '/opt/puppetlabs' },
+  }
 
   $test_params_defaults = {
     tool_installed        => true,
@@ -81,18 +85,17 @@ plan acid::test(
   }
 
   # merge defaults with params
-  $_ctrl_params    = $ctrl_params_defaults + $ctrl_params
-  $_test_params    = $test_params_defaults + $test_params
-  $_test_tool      = $_test_params[test_tool]
-  unless $test_params[lib_dir] { $_test_params[lib_dir] = "${opt_dir}/acid_lib/${_test_params[test_tool]}" }
-  unless $ctrl_params[lib_dir] { $_ctrl_params[lib_dir] = "${opt_dir}/acid_lib/${_test_params[test_tool]}" }
+  $_ctrl_params = $ctrl_params_defaults + $ctrl_params
+  $_test_params = $test_params_defaults + $test_params
+  $_ctrl_params = { lib_dir => "${_ctrl_params[opt_dir]}/acid_lib/${_test_params[test_tool]}" } + $ctrl_params
+  $_test_params = { lib_dir => "${_test_params[opt_dir]}/acid_lib/${_test_params[test_tool]}" } + $test_params
+
 
   # Stage the gems to tmp dir on the controller
-  $_ctrl_gem_dir = "${_ctrl_params[lib_dir]}/${$_test_tool}"
   unless $_ctrl_params[install_gem] == false {
     apply($controller, _catch_errors => true) {
       file { $_ctrl_params[lib_dir] : ensure => directory }
-      package { $_test_tool:
+      package { $_test_params[test_tool]:
         ensure          => $_ctrl_params[gem_version],
         provider        => puppet_gem,
         install_options => $_ctrl_params[gem_install_options] << { '--install_dir' => $_ctrl_params[lib_dir] },
@@ -102,15 +105,15 @@ plan acid::test(
 
   if $target_kernel == 'Linux' and $_ctrl_params[compress_tool] {
     # Compress if target is linux, native file compression in windows...bleghhh
-    run_command("tar -zcf ${_ctrl_params[lib_dir]}/${_test_tool}.tar.gz ${_ctrl_params[lib_dir]}",
+    run_command("tar -zcf ${_ctrl_params[lib_dir]}/${_test_params[test_tool]}.tar.gz ${_ctrl_params[lib_dir]}",
         $controller, '_catch_errors' => true, '_run_as' => 'root')
     # make lib dir on target
     run_command("mkdir -p ${_test_params[lib_dir]}", $target, '_catch_errors' => true, '_run_as' => 'root')
     # upload gems from controller to tmp dir on target
-    upload_file("${_ctrl_params[lib_dir]}/${_test_tool}.tar.gz", "${_test_params[lib_dir]}/../${_test_tool}.tar.gz",
+    upload_file("${_ctrl_params[lib_dir]}/${_test_params[test_tool]}.tar.gz", "${_test_params[lib_dir]}/../${_test_params[test_tool]}.tar.gz",
         $target, '_catch_errors' => true, '_run_as' => 'root')
     # Extract
-    run_command("tar -zxf ${_test_params[lib_dir]}/../${_test_tool}.tar.gz -C ${_test_params[lib_dir]}",
+    run_command("tar -zxf ${_test_params[lib_dir]}/../${_test_params[test_tool]}.tar.gz -C ${_test_params[lib_dir]}",
         $target, '_catch_errors' => true, '_run_as' => 'root')
   } else {
     # upload tool
