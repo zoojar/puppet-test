@@ -50,7 +50,7 @@ def build_test_file_path(test_files_dir, test_file, role)
     end
     if node_role.strip.empty?
       raise ['Unable to detect this node\'s role - perhaps puppet has not yet run?',
-             "(I tried to determine the role using data from: #{classes_txt_file})",
+             "(I tried to determine the role using data from: #{params['classes_txt_file']})",
              'Alternativey, you can provide a test_file parameter to this task:',
              'eg. test_file=web_server.rb'].join(' ')
     else
