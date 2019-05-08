@@ -53,7 +53,11 @@ plan acid::test(
     default => $test_params[kernel],
   }
 
-  $test_params_defaults[opt_dir] = $target_kernel ? { 'Windows' => 'c:/programdata/puppetlabs', default => '/opt/puppetlabs' }
+  $test_params_defaults = {}
+  $test_params_defaults = $test_params_defaults + $target_kernel ? { 
+    'Windows' => { opt_dir => 'c:/programdata/puppetlabs' }, 
+    default => '/opt/puppetlabs' 
+  }
 
   $ctrl_kernel = $ctrl_params[kernel] ? {
     undef   => run_task('facter_task', $controller, 'Getting controller OS kernel using facter_task', fact => 'kernel').first.value[kernel],
