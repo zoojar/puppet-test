@@ -53,7 +53,7 @@ plan acid::test(
     opt_dir        => run_task('facter_task', $target, 'Getting target OS kernel', fact => 'kernel').first.value[kernel] ? { 
       'Windows' => 'c:/programdata/puppetlabs', 
       default   => '/opt/puppetlabs',
-    }
+    },
   }
 
   $ctrl_params_defaults = {
@@ -61,11 +61,11 @@ plan acid::test(
     compress_tool       => false,
     install_gem         => true,
     gem_version         => latest,
-    gem_install_options => [ '--no-ri', '--no-rdoc' ]
+    gem_install_options => [ '--no-ri', '--no-rdoc' ],
     opt_dir             => run_task('facter_task', $controller, 'Getting controller OS kernel', fact => 'kernel').first.value[kernel] ? {
       'Windows' => { opt_dir => 'c:/programdata/puppetlabs' }, 
       default   => { opt_dir => '/opt/puppetlabs' },
-    }
+    },
   }
 
   # merge defaults with params
