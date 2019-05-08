@@ -1,20 +1,9 @@
 #!/opt/puppetlabs/puppet/bin/ruby
-# This task picks up a test for a given role
-# Store your tests at: <control-repo>/site-modules/role/spec/acceptance/<role>.rb
-# Roles & Profiles: use "role"
-# Example usage with bolt (running from the control-repo dir):
-#   bolt task run test::roles -n webserver-01.local --modulepath . \
-#     --params '{ "test_tool": "inspec" , "test_file": "web_server.rb" }'
-#   It does the following things:
-#     1. Installs the inspec gems on webserver-01.local in test_tool_install_dir (default: /tmp/puppet_test/gems)
-#     2. Copies the files from <control-repo>/site-modules/role/spec/acceptance/web_server.rb
-#     3. Executes inspec runner with the web_server.rb spec and returns the report as stdout
 
 require 'json'
 require 'open3'
 require 'puppet'
 require 'facter'
-require 'stringio'
 
 params                          = JSON.parse(STDIN.read)
 opt_dir                         = case Facter.value(:kernel)
