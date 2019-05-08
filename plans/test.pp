@@ -96,7 +96,6 @@ plan acid::test(
       }
     }
   }
-  run_task
 
   if $target_kernel == 'Linux' and $_ctrl_params[compress_tool] {
     # Compress if target is linux, native file compression in windows...bleghhh
