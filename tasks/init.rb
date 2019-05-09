@@ -98,10 +98,7 @@ begin
   $LOAD_PATH.unshift(*Dir.glob(File.expand_path("#{params['lib_dir']}/**/lib", __FILE__)))
 
   # load helper for test tool
-
-  helper =  File.join(params['_installdir'], params['_modulename'], 'files', 'helpers', "#{params['test_tool']}_helper.rb")
-  puts "Getting help..."
-  require_relative helper
+  require_relative File.join(params['_installdir'], params['_modulename'], 'files', 'helpers', "#{params['test_tool']}_helper.rb")
 
   # execute test
   test_exit_code = run_test(params['test_tool'], abs_test_file, params['report_format'])
